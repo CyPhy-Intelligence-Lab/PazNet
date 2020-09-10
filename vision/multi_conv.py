@@ -171,7 +171,7 @@ assert not np.any(np.isnan(op_scaled))
 op_scaled = np.expand_dims(op_scaled, axis=-1)
 
 model = multi_conv()
-model.compile(optimizer=Adam(0.01), loss=categorical_crossentropy,
+model.compile(optimizer=Adam(0.1), loss=categorical_crossentropy,
               metrics=[categorical_accuracy])
 
 model.fit(x=[ts_scaled, op_scaled], y=onehot, epochs=500000, batch_size=32, validation_split=0.3, shuffle=True)
