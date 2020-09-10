@@ -216,11 +216,33 @@ def over_sampling(data):
     return pd.concat([X_resampled, y_resampled], axis=1)
 
 
+def over_sampling_op(ts_data, op_data):
+    ros = RandomOverSampler(random_state=0)
+    ts_X = ts_data.iloc[:, :-1]
+    ts_y = ts_data.iloc[:, -1]
+    ts_X_resampled, ts_y_resampled = ros.fit_resample(ts_X, ts_y)
+    indices = ros.sample_indices_
+    ts_resampled = pd.concat([ts_X_resampled, ts_y_resampled], axis=1)
+
+    added_op = op_data[indices[1915:]]
+    op_resampled = np.concatenate((op_data, added_op), axis=0)
+    return ts_resampled, op_resampled
+
+
 def norm(data):
     min_max_scaler = preprocessing.MinMaxScaler()
     data_scaled = min_max_scaler.fit_transform(data.values)
     data_scaled = pd.DataFrame(data_scaled)
     return data_scaled
+
+
+def norm_op(data):
+    op_list = []
+    for d in data:
+        min_max_scaler = preprocessing.MinMaxScaler()
+        d_scaled = min_max_scaler.fit_transform(d)
+        op_list.append(d_scaled)
+    return np.array(op_list)
 
 
 def clustering_Kmeans(X):
@@ -311,5 +333,4 @@ def choose_features(feature_index_list):
 
 
 if __name__ == '__main__':
-    get_tsfresh_data()
     print()

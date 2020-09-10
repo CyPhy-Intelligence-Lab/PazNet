@@ -23,7 +23,7 @@ for p in path_list:
     event = os.listdir(path + p)
     event.sort()
     for e in event:
-        maskrcnn = pickle.load(open(path + p + '/' + e + '/maskrcnn.pkl', "rb"), encoding='utf-8')
+        maskrcnn = pickle.load(open(path + p + '/' + e + '/vision.pkl', "rb"), encoding='utf-8')
         objects = []
         for frame in maskrcnn:
             objects.append(frame['class_ids'])

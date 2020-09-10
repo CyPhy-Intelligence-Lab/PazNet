@@ -36,8 +36,10 @@ for sample in samples:
     sample_4.append(sample[19:59, 1:])
 df = df.iloc[jdx, :]
 df.drop('Unnamed: 0',axis=1, inplace=True)
-np.save('../data/concat_X_10hz_6_0.npy', samples_new)
-np.save('../data/concat_X_10hz_4_0.npy', sample_4)
+np.save('../data/used_samples_jdx.npy', np.array(jdx))
+
+np.save('../data/concat_X_10hz_6_0.npy', np.array(samples_new).astype(float))
+np.save('../data/concat_X_10hz_4_0.npy', np.array(sample_4).astype(float))
 df.to_csv('../data/concat_objects.csv')
 label = np.load('/Users/wuxiaodong/PycharmProjects/isgoodtime/data/y_10hz.npy')
 label = label[idx]
