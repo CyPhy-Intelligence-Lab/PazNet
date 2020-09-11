@@ -92,7 +92,7 @@ def multi_conv():
 
     # second input model: all open pose (60, 252)
     visible2 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
-    conv21 = Conv2D(32, kernel_size=3, activation='relu')(visible2)
+    conv21 = Conv2D(16, kernel_size=3, activation='relu')(visible2)
     pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
     conv22 = Conv2D(16, kernel_size=3, activation='relu')(pool21)
     pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
