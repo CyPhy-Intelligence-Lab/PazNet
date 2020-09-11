@@ -193,7 +193,7 @@ assert not np.any(np.isnan(op_test))
 balanced_op = np.expand_dims(balanced_op, axis=-1)
 op_test = np.expand_dims(op_test, axis=-1)
 
-model = multi_conv()
+model = multi_conv(C1, k1, C2, k2)
 model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
