@@ -172,7 +172,6 @@ balanced_ts = balanced_ts.iloc[:, :-1]
 ts_test = ts_test.iloc[:, :-1]
 
 
-
 assert not np.any(np.isnan(balanced_ts))
 assert not np.any(np.isnan(balanced_op))
 assert not np.any(np.isnan(ts_test))
@@ -183,7 +182,7 @@ balanced_op = np.expand_dims(balanced_op, axis=-1)
 op_test = np.expand_dims(op_test, axis=-1)
 
 model = multi_conv()
-model.compile(optimizer=Adam(0.001), loss=categorical_crossentropy,
+model.compile(optimizer=Adam(0.01), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
 model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
