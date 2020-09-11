@@ -25,10 +25,7 @@ n_face_pose = 70 * 2
 # param
 learning_rate = sys.argv[1]
 batch_size = sys.argv[2]
-C1 = sys.argv[3]
-k1 = sys.argv[4]
-C2 = sys.argv[5]
-k2 = sys.argv[6]
+
 
 def load_data():
     ts = np.load('../data/concat_X_10hz_4_0.npy')
@@ -88,16 +85,16 @@ def mlp():
     return model
 
 
-def multi_conv(C1, k1, C2, k2):
+def multi_conv():
     # first input model
     visible1 = Input(shape=(n_tsfresh, ))  # (None, n_tsfresh, 1)
     #flat1 = Flatten()(visible1)
 
     # second input model: all open pose (60, 252)
     visible2 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
-    conv21 = Conv2D(C1, kernel_size=k1, activation='relu')(visible2)
+    conv21 = Conv2D(32, kernel_size=3, activation='relu')(visible2)
     pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
-    conv22 = Conv2D(C2, kernel_size=k2, activation='relu')(pool21)
+    conv22 = Conv2D(16, kernel_size=4, activation='relu')(pool21)
     pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
     flat2 = Flatten()(pool22)
 
@@ -193,7 +190,7 @@ assert not np.any(np.isnan(op_test))
 balanced_op = np.expand_dims(balanced_op, axis=-1)
 op_test = np.expand_dims(op_test, axis=-1)
 
-model = multi_conv(C1, k1, C2, k2)
+model = multi_conv()
 model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
