@@ -152,7 +152,9 @@ op_data, label = load_op_data()
 ts_data = load_data()
 
 # over-sampling
-balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
+#balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
+balanced_ts = ts_data
+balanced_op = op_data
 
 # one hot encoding
 onehot = pd.get_dummies(balanced_ts['goodtime'], columns=['l1', 'l2'])
@@ -172,7 +174,7 @@ op_scaled = np.expand_dims(op_scaled, axis=-1)
 
 model = multi_conv()
 model.compile(optimizer=Adam(0.001), loss=categorical_crossentropy,
-              metrics=[categorical_accuracy])
+              metrics=[categorical_accuracy, ])
 
 model.fit(x=[ts_scaled, op_scaled], y=onehot, epochs=500000, batch_size=32, validation_split=0.3, shuffle=True)
 print(model.summary())
