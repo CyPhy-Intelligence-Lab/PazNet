@@ -224,7 +224,7 @@ def over_sampling_op(ts_data, op_data):
     indices = ros.sample_indices_
     ts_resampled = pd.concat([ts_X_resampled, ts_y_resampled], axis=1)
 
-    added_op = op_data[indices[1915:]]
+    added_op = op_data[indices[len(ts_X):]]
     op_resampled = np.concatenate((op_data, added_op), axis=0)
     return ts_resampled, op_resampled
 

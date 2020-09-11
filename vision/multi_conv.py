@@ -151,32 +151,43 @@ print(model.summary())
 op_data, label = load_op_data()
 ts_data = load_data()
 
-# over-sampling
-#balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
-balanced_ts = ts_data
-balanced_op = op_data
-
-# one hot encoding
-onehot = pd.get_dummies(balanced_ts['goodtime'], columns=['l1', 'l2'])
-balanced_ts = balanced_ts.drop('goodtime', axis=1)
-
 # normalize:
 # for open pose data, there are 3 options: a)sample-wise normalization; b)feature-wise; c) batch norm
-ts_scaled = data_preprocessing.norm(balanced_ts)
-op_scaled = data_preprocessing.norm_op(balanced_op)
+ts_scaled = data_preprocessing.norm(ts_data)
+op_scaled = data_preprocessing.norm_op(op_data)
+
+# train-test split
+sep = int(len(ts_scaled) * 0.7)
+ts_train, op_train = ts_scaled[:sep], op_scaled[:sep]
+ts_test, op_test = ts_scaled[sep:], op_scaled[sep:]
+
+# over-sampling
+balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_train, op_train)
 
 
-assert not np.any(np.isnan(ts_scaled))
-assert not np.any(np.isnan(op_scaled))
+# one hot encoding
+onehot_train = pd.get_dummies(balanced_ts.iloc[:, -1], columns=['l1', 'l2'])
+onehot_test = pd.get_dummies(ts_test.iloc[:, -1], columns=['l1', 'l2'])
+balanced_ts = balanced_ts.iloc[:, :-1]
+ts_test = ts_test.iloc[:, :-1]
 
 
-op_scaled = np.expand_dims(op_scaled, axis=-1)
+
+assert not np.any(np.isnan(balanced_ts))
+assert not np.any(np.isnan(balanced_op))
+assert not np.any(np.isnan(ts_test))
+assert not np.any(np.isnan(op_test))
+
+# reshape input2
+balanced_op = np.expand_dims(balanced_op, axis=-1)
+op_test = np.expand_dims(op_test, axis=-1)
 
 model = multi_conv()
 model.compile(optimizer=Adam(0.001), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
-model.fit(x=[ts_scaled, op_scaled], y=onehot, epochs=500000, batch_size=32, validation_split=0.3, shuffle=True)
+model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
+          batch_size=32, validation_data=([ts_test, op_test], onehot_test), shuffle=True)
 print(model.summary())
 
 
