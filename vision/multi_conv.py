@@ -100,8 +100,8 @@ def multi_conv():
 
     # merge input models
     merge = concatenate([visible1, flat2])
-    hidden1 = Dense(128, activation='relu')(merge)
-    hidden2 = Dense(128, activation='relu')(hidden1)
+    hidden1 = Dense(64, activation='relu')(merge)
+    hidden2 = Dense(64, activation='relu')(hidden1)
     output = Dense(2, activation='softmax')(hidden2)
     model = Model(inputs=[visible1, visible2], output=output)
 
