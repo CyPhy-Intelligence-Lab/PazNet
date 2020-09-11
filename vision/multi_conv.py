@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+import sys
+from sklearn.utils import shuffle
 from keras.utils import plot_model
 from keras.models import Model
 from keras.layers import Input
@@ -20,6 +22,13 @@ n_body_pose = 14 * 2
 n_hands_pose = 21 * 4
 n_face_pose = 70 * 2
 
+# param
+learning_rate = sys.argv[1]
+batch_size = sys.argv[2]
+C1 = sys.argv[3]
+k1 = sys.argv[4]
+C2 = sys.argv[5]
+k2 = sys.argv[6]
 
 def load_data():
     ts = np.load('../data/concat_X_10hz_4_0.npy')
@@ -79,16 +88,16 @@ def mlp():
     return model
 
 
-def multi_conv():
+def multi_conv(C1, k1, C2, k2):
     # first input model
     visible1 = Input(shape=(n_tsfresh, ))  # (None, n_tsfresh, 1)
     #flat1 = Flatten()(visible1)
 
     # second input model: all open pose (60, 252)
     visible2 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
-    conv21 = Conv2D(32, kernel_size=3, activation='relu')(visible2)
+    conv21 = Conv2D(C1, kernel_size=k1, activation='relu')(visible2)
     pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
-    conv22 = Conv2D(16, kernel_size=4, activation='relu')(pool21)
+    conv22 = Conv2D(C2, kernel_size=k2, activation='relu')(pool21)
     pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
     flat2 = Flatten()(pool22)
 
@@ -151,6 +160,9 @@ print(model.summary())
 op_data, label = load_op_data()
 ts_data = load_data()
 
+# shuffle
+ts_data, op_data = shuffle(ts_data, op_data, random_state=0)
+
 # normalize:
 # for open pose data, there are 3 options: a)sample-wise normalization; b)feature-wise; c) batch norm
 ts_scaled = data_preprocessing.norm(ts_data)
@@ -182,11 +194,11 @@ balanced_op = np.expand_dims(balanced_op, axis=-1)
 op_test = np.expand_dims(op_test, axis=-1)
 
 model = multi_conv()
-model.compile(optimizer=Adam(0.01), loss=categorical_crossentropy,
+model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
 model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
-          batch_size=32, validation_data=([ts_test, op_test], onehot_test), shuffle=True)
+          batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test))
 print(model.summary())
 
 
