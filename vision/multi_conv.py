@@ -23,8 +23,8 @@ n_hands_pose = 21 * 4
 n_face_pose = 70 * 2
 
 # param
-learning_rate = sys.argv[1]
-batch_size = sys.argv[2]
+learning_rate = float(sys.argv[1])
+batch_size = int(sys.argv[2])
 
 
 def load_data():
