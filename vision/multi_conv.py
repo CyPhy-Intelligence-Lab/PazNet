@@ -98,16 +98,15 @@ def multi_conv():
     pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
     conv22 = Conv2D(4, kernel_size=3, activation='relu')(pool21)
     pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
-    dropout1 = Dropout(0.5)(pool22)
-    flat2 = Flatten()(dropout1)
+    flat2 = Flatten()(pool22)
 
     # merge input models
     merge = concatenate([visible1, flat2])
     hidden1 = Dense(32, activation='relu')(merge)
-    dropout2 = Dropout(0.5)(hidden1)
-    hidden2 = Dense(32, activation='relu')(dropout2)
-    dropout3 = Dropout(0.5)(hidden2)
-    output = Dense(2, activation='softmax')(dropout3)
+    dropout1 = Dropout(0.5)(hidden1)
+    hidden2 = Dense(32, activation='relu')(dropout1)
+    dropout2 = Dropout(0.5)(hidden2)
+    output = Dense(2, activation='softmax')(dropout2)
     model = Model(inputs=[visible1, visible2], output=output)
 
     print(model.summary())
