@@ -102,9 +102,9 @@ def multi_conv():
 
     # merge input models
     merge = concatenate([visible1, flat2])
-    hidden1 = Dense(32, activation='relu')(merge)
+    hidden1 = Dense(128, activation='relu')(merge)
     dropout1 = Dropout(0.5)(hidden1)
-    hidden2 = Dense(32, activation='relu')(dropout1)
+    hidden2 = Dense(128, activation='relu')(dropout1)
     dropout2 = Dropout(0.5)(hidden2)
     output = Dense(2, activation='softmax')(dropout2)
     model = Model(inputs=[visible1, visible2], output=output)
