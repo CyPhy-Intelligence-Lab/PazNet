@@ -10,6 +10,7 @@ from keras.layers import Dense
 from keras.layers import Flatten
 from keras.layers.convolutional import Conv2D
 from keras.layers.pooling import MaxPooling2D
+from keras.layers import Dropout
 from keras.layers.merge import concatenate
 from keras.optimizers import SGD
 from keras.optimizers import Adam
@@ -25,6 +26,7 @@ n_face_pose = 70 * 2
 # param
 learning_rate = float(sys.argv[1])
 batch_size = int(sys.argv[2])
+
 
 
 def load_data():
@@ -96,13 +98,16 @@ def multi_conv():
     pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
     conv22 = Conv2D(4, kernel_size=3, activation='relu')(pool21)
     pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
-    flat2 = Flatten()(pool22)
+    dropout1 = Dropout(0.5)(pool22)
+    flat2 = Flatten()(dropout1)
 
     # merge input models
     merge = concatenate([visible1, flat2])
     hidden1 = Dense(32, activation='relu')(merge)
-    hidden2 = Dense(32, activation='relu')(hidden1)
-    output = Dense(2, activation='softmax')(hidden2)
+    dropout2 = Dropout(0.5)(hidden1)
+    hidden2 = Dense(32, activation='relu')(dropout2)
+    dropout3 = Dropout(0.5)(hidden2)
+    output = Dense(2, activation='softmax')(dropout3)
     model = Model(inputs=[visible1, visible2], output=output)
 
     print(model.summary())
