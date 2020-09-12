@@ -100,8 +100,8 @@ def multi_conv():
 
     # merge input models
     merge = concatenate([visible1, flat2])
-    hidden1 = Dense(64, activation='relu')(merge)
-    hidden2 = Dense(64, activation='relu')(hidden1)
+    hidden1 = Dense(32, activation='relu')(merge)
+    hidden2 = Dense(32, activation='relu')(hidden1)
     output = Dense(2, activation='softmax')(hidden2)
     model = Model(inputs=[visible1, visible2], output=output)
 
@@ -197,7 +197,6 @@ model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
 model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
           batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test))
 print(model.summary())
-
 
 
 def multi_conv_sep():
