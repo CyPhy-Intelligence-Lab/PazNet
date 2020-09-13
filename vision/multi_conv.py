@@ -114,6 +114,23 @@ def multi_conv():
     return model
 
 
+def conv():
+    visible1 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
+    conv1 = Conv2D(32, kernel_size=3, activation='relu')(visible1)
+    pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
+    conv2 = Conv2D(16, kernel_size=4, activation='relu')(pool1)
+    pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
+    flat2 = Flatten()(pool2)
+
+    hidden1 = Dense(128, activation='relu')(flat2)
+    dropout1 = Dropout(0.3)(hidden1)
+    output = Dense(2, activation='softmax')(dropout1)
+    model = Model(inputs=visible1, output=output)
+
+    print(model.summary())
+
+    return model
+
 op_data, label = load_op_data()
 ts_data = load_data()
 
@@ -149,13 +166,20 @@ assert not np.any(np.isnan(op_test))
 # reshape input2
 balanced_op = np.expand_dims(balanced_op, axis=-1)
 op_test = np.expand_dims(op_test, axis=-1)
-
+'''
 model = multi_conv()
 model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
 model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
           batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test))
+'''
+
+model = conv()
+model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
+              metrics=[categorical_accuracy, ])
+model.fit(x=balanced_op, y=onehot_train, epochs=500000,
+          batch_size=batch_size, validation_data=(op_test, onehot_test))
 print(model.summary())
 
 
