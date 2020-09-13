@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-import sys
-from sklearn.utils import shuffle
 from keras.utils import plot_model
 from keras.models import Model
 from keras.layers import Input
@@ -10,23 +8,18 @@ from keras.layers import Dense
 from keras.layers import Flatten
 from keras.layers.convolutional import Conv2D
 from keras.layers.pooling import MaxPooling2D
-from keras.layers import Dropout
 from keras.layers.merge import concatenate
 from keras.optimizers import SGD
 from keras.optimizers import Adam
 from keras.losses import categorical_crossentropy
 from keras.metrics import categorical_accuracy
 import data_preprocessing
+from sklearn.utils import shuffle
 
 n_tsfresh = 480
 n_body_pose = 14 * 2
 n_hands_pose = 21 * 4
 n_face_pose = 70 * 2
-
-# param
-learning_rate = float(sys.argv[1])
-batch_size = int(sys.argv[2])
-
 
 
 def load_data():
@@ -103,10 +96,8 @@ def multi_conv():
     # merge input models
     merge = concatenate([visible1, flat2])
     hidden1 = Dense(128, activation='relu')(merge)
-    dropout1 = Dropout(0.3)(hidden1)
-    hidden2 = Dense(128, activation='relu')(dropout1)
-    dropout2 = Dropout(0.3)(hidden2)
-    output = Dense(2, activation='softmax')(dropout2)
+    hidden2 = Dense(128, activation='relu')(hidden1)
+    output = Dense(2, activation='softmax')(hidden2)
     model = Model(inputs=[visible1, visible2], output=output)
 
     print(model.summary())
@@ -117,46 +108,33 @@ def multi_conv():
 op_data, label = load_op_data()
 ts_data = load_data()
 
-# shuffle
-ts_data, op_data = shuffle(ts_data, op_data, random_state=0)
+# over-sampling
+balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
+
+balanced_ts, balanced_op = shuffle(balanced_ts, balanced_op)
+# one hot encoding
+onehot = pd.get_dummies(balanced_ts['goodtime'], columns=['l1', 'l2'])
+balanced_ts = balanced_ts.drop('goodtime', axis=1)
 
 # normalize:
 # for open pose data, there are 3 options: a)sample-wise normalization; b)feature-wise; c) batch norm
-ts_scaled = data_preprocessing.norm(ts_data)
-op_scaled = data_preprocessing.norm_op(op_data)
-
-# train-test split
-sep = int(len(ts_scaled) * 0.7)
-ts_train, op_train = ts_scaled[:sep], op_scaled[:sep]
-ts_test, op_test = ts_scaled[sep:], op_scaled[sep:]
-
-# over-sampling
-balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_train, op_train)
+ts_scaled = data_preprocessing.norm(balanced_ts)
+op_scaled = data_preprocessing.norm_op(balanced_op)
 
 
-# one hot encoding
-onehot_train = pd.get_dummies(balanced_ts.iloc[:, -1], columns=['l1', 'l2'])
-onehot_test = pd.get_dummies(ts_test.iloc[:, -1], columns=['l1', 'l2'])
-balanced_ts = balanced_ts.iloc[:, :-1]
-ts_test = ts_test.iloc[:, :-1]
+assert not np.any(np.isnan(ts_scaled))
+assert not np.any(np.isnan(op_scaled))
 
 
-assert not np.any(np.isnan(balanced_ts))
-assert not np.any(np.isnan(balanced_op))
-assert not np.any(np.isnan(ts_test))
-assert not np.any(np.isnan(op_test))
-
-# reshape input2
-balanced_op = np.expand_dims(balanced_op, axis=-1)
-op_test = np.expand_dims(op_test, axis=-1)
+op_scaled = np.expand_dims(op_scaled, axis=-1)
 
 model = multi_conv()
-model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
+model.compile(optimizer=Adam(0.001), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
-model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
-          batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test))
+model.fit(x=[ts_scaled, op_scaled], y=onehot, epochs=500000, batch_size=32, validation_split=0.2, shuffle=True)
 print(model.summary())
+
 
 
 def multi_conv_sep():
