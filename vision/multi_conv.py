@@ -14,6 +14,7 @@ from keras.optimizers import Adam
 from keras.losses import categorical_crossentropy
 from keras.metrics import categorical_accuracy
 import data_preprocessing
+from sklearn.utils import shuffle
 
 n_tsfresh = 480
 n_body_pose = 14 * 2
@@ -150,7 +151,7 @@ print(model.summary())
 
 op_data, label = load_op_data()
 ts_data = load_data()
-
+ts_data, op_data = shuffle(ts_data, op_data)
 # over-sampling
 #balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
 balanced_ts = ts_data
