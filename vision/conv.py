@@ -107,11 +107,22 @@ def multi_conv():
 
 op_data, label = load_op_data()
 ts_data = load_data()
-
+'''
+# create validation set
+ratio = 0.8
+val_ts, val_op = data_preprocessing.samplinghalfhalf(ts_data, op_data, ratio)
+val_y = pd.get_dummies(val_ts.iloc[:, -1], columns=['l1', 'l2'])
+val_ts = val_ts.iloc[:, :-1]
+val_ts = data_preprocessing.norm(val_ts)
+val_op = data_preprocessing.norm_op(val_op)
+val_op = np.expand_dims(val_op, axis=-1)
+ts_data = ts_data[:int(len(ts_data)*ratio)]
+op_data = op_data[:int(len(op_data)*ratio)]
+'''
 # over-sampling
-balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
+#balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
+balanced_ts, balanced_op = data_preprocessing.over_sampling_op_smote(ts_data, op_data)
 
-balanced_ts, balanced_op = shuffle(balanced_ts, balanced_op)
 # one hot encoding
 onehot = pd.get_dummies(balanced_ts['goodtime'], columns=['l1', 'l2'])
 balanced_ts = balanced_ts.drop('goodtime', axis=1)
@@ -132,9 +143,10 @@ model = multi_conv()
 model.compile(optimizer=Adam(0.001), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
-model.fit(x=[ts_scaled, op_scaled], y=onehot, epochs=500000, batch_size=32, validation_split=0.2, shuffle=True)
+model.fit(x=[ts_scaled, op_scaled], y=onehot, epochs=20, batch_size=32, validation_split=0.3, shuffle=True)
 print(model.summary())
-
+#loss, accuracy = model.evaluate(x=[val_ts,val_op], y=val_y)
+#print("\nLoss: %.2f, Accuracy: %.2f%%" % (loss, accuracy*100))
 
 
 def multi_conv_sep():

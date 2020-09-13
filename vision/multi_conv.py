@@ -96,7 +96,7 @@ def multi_conv():
     visible2 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
     conv21 = Conv2D(32, kernel_size=3, activation='relu')(visible2)
     pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
-    conv22 = Conv2D(16, kernel_size=4, activation='relu')(pool21)
+    conv22 = Conv2D(16, kernel_size=3, activation='relu')(pool21)
     pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
     flat2 = Flatten()(pool22)
 
@@ -118,7 +118,7 @@ def conv():
     visible1 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
     conv1 = Conv2D(32, kernel_size=3, activation='relu')(visible1)
     pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
-    conv2 = Conv2D(16, kernel_size=4, activation='relu')(pool1)
+    conv2 = Conv2D(16, kernel_size=3, activation='relu')(pool1)
     pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
     flat2 = Flatten()(pool2)
 

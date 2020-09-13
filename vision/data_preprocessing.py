@@ -10,6 +10,8 @@ from sklearn.decomposition import PCA
 from sklearn.linear_model import SGDClassifier
 from sklearn.metrics import classification_report
 from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
+from imblearn.over_sampling import SMOTE
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from tsfresh import extract_features
 from tsfresh.utilities.dataframe_functions import impute
@@ -226,6 +228,33 @@ def over_sampling_op(ts_data, op_data):
 
     added_op = op_data[indices[len(ts_X):]]
     op_resampled = np.concatenate((op_data, added_op), axis=0)
+    return ts_resampled, op_resampled
+
+
+def over_sampling_op_smote(ts_data, op_data):
+    sm = SMOTE(random_state=0)
+    ts_X = ts_data.iloc[:, :-1]
+    ts_y = ts_data.iloc[:, -1]
+    ts_X_resampled, ts_y_resampled = sm.fit_resample(ts_X, ts_y)
+    ts_resampled = pd.concat([ts_X_resampled, ts_y_resampled], axis=1)
+
+    op_data = op_data.reshape((len(op_data), -1))
+    op_resampled, op_y_resampled = sm.fit_resample(op_data, ts_y)
+    op_resampled = op_resampled.reshape((-1, 60, 252))
+    return ts_resampled, op_resampled
+
+
+def samplinghalfhalf(ts_data, op_data, ratio):
+    rus = RandomUnderSampler(random_state=0)
+    ts_leave = ts_data[int(len(ts_data)*ratio):]
+    op_leave = op_data[int(len(op_data)*ratio):]
+    ts_X = ts_leave.iloc[:, :-1]
+    ts_y = ts_leave.iloc[:, -1]
+    ts_X_resampled, ts_y_resampled = rus.fit_resample(ts_X, ts_y)
+    indices = rus.sample_indices_
+    ts_resampled = pd.concat([ts_X_resampled, ts_y_resampled], axis=1)
+
+    op_resampled = op_leave[indices]
     return ts_resampled, op_resampled
 
 
