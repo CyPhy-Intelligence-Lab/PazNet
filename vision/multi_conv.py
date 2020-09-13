@@ -187,7 +187,7 @@ model.compile(optimizer=Adam(0.001), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
 model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
-          batch_size=32, validation_data=([ts_test, op_test], o, shuffle=True)
+          batch_size=32, validation_data=([ts_test, op_test], onehot_test), shuffle=True)
 print(model.summary())
 
 
