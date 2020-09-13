@@ -153,9 +153,8 @@ op_data, label = load_op_data()
 ts_data = load_data()
 ts_data, op_data = shuffle(ts_data, op_data)
 # over-sampling
-#balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
-balanced_ts = ts_data
-balanced_op = op_data
+balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
+
 
 # one hot encoding
 onehot = pd.get_dummies(balanced_ts['goodtime'], columns=['l1', 'l2'])
