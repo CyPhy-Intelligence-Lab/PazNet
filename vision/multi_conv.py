@@ -176,7 +176,7 @@ model = multi_conv()
 model.compile(optimizer=Adam(0.001), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
-model.fit(x=[ts_scaled, op_scaled], y=onehot, epochs=500000, batch_size=32, validation_split=0.3, shuffle=True)
+model.fit(x=[ts_scaled, op_scaled], y=onehot, epochs=500000, batch_size=32, validation_split=0.2, shuffle=True)
 print(model.summary())
 
 
