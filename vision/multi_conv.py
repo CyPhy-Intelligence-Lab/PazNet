@@ -28,7 +28,6 @@ learning_rate = float(sys.argv[1])
 batch_size = int(sys.argv[2])
 
 
-
 def load_data():
     ts = np.load('../data/concat_X_10hz_4_0.npy')
     ts_tsfresh = pd.read_csv('../data/tsfresh_features_4_0.csv')
@@ -180,7 +179,6 @@ ts_test, op_test = ts_scaled[sep:], op_scaled[sep:]
 # over-sampling
 balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_train, op_train)
 
-
 # one hot encoding
 onehot_train = pd.get_dummies(balanced_ts.iloc[:, -1], columns=['l1', 'l2'])
 onehot_test = pd.get_dummies(ts_test.iloc[:, -1], columns=['l1', 'l2'])
@@ -198,7 +196,7 @@ balanced_op = np.expand_dims(balanced_op, axis=-1)
 op_test = np.expand_dims(op_test, axis=-1)
 
 model = multi_conv()
-model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
+model.compile(optimizer=Adam(learning_rate, decay=0.001), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
 model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
