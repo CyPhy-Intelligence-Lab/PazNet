@@ -153,7 +153,7 @@ op_data, label = load_op_data()
 ts_data = load_data()
 
 # over-sampling
-balanced_ts, balanced_op, indices = data_preprocessing.over_sampling_op(ts_data, op_data)
+balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
 
 
 # one hot encoding
