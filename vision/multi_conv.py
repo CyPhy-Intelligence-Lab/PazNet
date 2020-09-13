@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-import sys
-from sklearn.utils import shuffle
 from keras.utils import plot_model
 from keras.models import Model
 from keras.layers import Input
@@ -10,22 +8,17 @@ from keras.layers import Dense
 from keras.layers import Flatten
 from keras.layers.convolutional import Conv2D
 from keras.layers.pooling import MaxPooling2D
-from keras.layers import Dropout
 from keras.layers.merge import concatenate
 from keras.optimizers import SGD
 from keras.optimizers import Adam
 from keras.losses import categorical_crossentropy
-from keras.metrics import categorical_accuracy, accuracy
+from keras.metrics import categorical_accuracy
 import data_preprocessing
 
 n_tsfresh = 480
 n_body_pose = 14 * 2
 n_hands_pose = 21 * 4
 n_face_pose = 70 * 2
-
-# param
-learning_rate = float(sys.argv[1])
-batch_size = int(sys.argv[2])
 
 
 def load_data():
@@ -93,19 +86,17 @@ def multi_conv():
 
     # second input model: all open pose (60, 252)
     visible2 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
-    conv21 = Conv2D(8, kernel_size=3, activation='relu')(visible2)
+    conv21 = Conv2D(32, kernel_size=3, activation='relu')(visible2)
     pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
-    conv22 = Conv2D(4, kernel_size=3, activation='relu')(pool21)
+    conv22 = Conv2D(16, kernel_size=4, activation='relu')(pool21)
     pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
     flat2 = Flatten()(pool22)
 
     # merge input models
     merge = concatenate([visible1, flat2])
     hidden1 = Dense(128, activation='relu')(merge)
-    dropout1 = Dropout(0.5)(hidden1)
-    hidden2 = Dense(128, activation='relu')(dropout1)
-    dropout2 = Dropout(0.5)(hidden2)
-    output = Dense(2, activation='softmax')(dropout2)
+    hidden2 = Dense(128, activation='relu')(hidden1)
+    output = Dense(2, activation='softmax')(hidden2)
     model = Model(inputs=[visible1, visible2], output=output)
 
     print(model.summary())
@@ -116,12 +107,21 @@ def multi_conv():
 '''
 samples = load_data()
 
-# shuffle
+# over-sampling
+balanced_samples = data_preprocessing.over_sampling(samples)
 
-shuffle(samples)
+# one hot encoding
+onehot = pd.get_dummies(balanced_samples['goodtime'], columns=['l1', 'l2'])
+data = pd.concat([balanced_samples, onehot], axis=1)
+data = data.drop('goodtime', axis=1)
 
 # normalize
-data_scaled = data_preprocessing.norm(samples)
+data_scaled = data_preprocessing.norm(data)
+
+# shuffle
+data_scaled = data_scaled.values.astype(np.float32)
+np.random.shuffle(data_scaled)
+assert not np.any(np.isnan(data_scaled))
 
 # train-test separation
 
@@ -129,27 +129,15 @@ sep = int(len(data_scaled) * 0.7)
 data_train = data_scaled[:sep]
 data_test = data_scaled[sep:]
 
-# over-sampling
-balanced_samples = data_preprocessing.over_sampling(data_train)
-
-# one hot encoding
-onehot_train = pd.get_dummies(balanced_samples.iloc[:, -1], columns=['l1', 'l2'])
-onehot_test = pd.get_dummies(data_test.iloc[:, -1], columns=['l1', 'l2'])
-
-balanced_samples = balanced_samples.iloc[:, :-1]
-data_test = data_test.iloc[:, :-1]
-
-assert not np.any(np.isnan(data_scaled))
+X_train = data_train[:, :-2]
+X_test = data_test[:, :-2]
+y_train = data_train[:, -2:]
+y_test = data_test[:, -2:]
 
 
-X_train = balanced_samples
-X_test = data_test
-y_train = onehot_train
-y_test = onehot_test
-
-
+n_tsfresh = len(X_train[0])
 model = mlp()
-model.compile(optimizer=SGD(0.0001),
+model.compile(optimizer=SGD(0.01),
               loss=categorical_crossentropy,
               metrics=[categorical_accuracy])
 
@@ -162,9 +150,6 @@ print(model.summary())
 
 op_data, label = load_op_data()
 ts_data = load_data()
-
-# shuffle
-ts_data, op_data = shuffle(ts_data, op_data, random_state=0)
 
 # normalize:
 # for open pose data, there are 3 options: a)sample-wise normalization; b)feature-wise; c) batch norm
@@ -179,11 +164,13 @@ ts_test, op_test = ts_scaled[sep:], op_scaled[sep:]
 # over-sampling
 balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_train, op_train)
 
+
 # one hot encoding
 onehot_train = pd.get_dummies(balanced_ts.iloc[:, -1], columns=['l1', 'l2'])
 onehot_test = pd.get_dummies(ts_test.iloc[:, -1], columns=['l1', 'l2'])
 balanced_ts = balanced_ts.iloc[:, :-1]
 ts_test = ts_test.iloc[:, :-1]
+
 
 
 assert not np.any(np.isnan(balanced_ts))
@@ -196,12 +183,13 @@ balanced_op = np.expand_dims(balanced_op, axis=-1)
 op_test = np.expand_dims(op_test, axis=-1)
 
 model = multi_conv()
-model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
-              metrics=[categorical_accuracy])
+model.compile(optimizer=Adam(0.001), loss=categorical_crossentropy,
+              metrics=[categorical_accuracy, ])
 
 model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
-          batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test))
+          batch_size=32, validation_data=([ts_test, op_test], o, shuffle=True)
 print(model.summary())
+
 
 
 def multi_conv_sep():
