@@ -94,9 +94,9 @@ def multi_conv():
 
     # second input model: all open pose (60, 252)
     visible2 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
-    conv21 = Conv2D(8, kernel_size=3, activation='relu')(visible2)
+    conv21 = Conv2D(32, kernel_size=3, activation='relu')(visible2)
     pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
-    conv22 = Conv2D(4, kernel_size=3, activation='relu')(pool21)
+    conv22 = Conv2D(16, kernel_size=3, activation='relu')(pool21)
     pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
     flat2 = Flatten()(pool22)
 
@@ -117,21 +117,12 @@ def multi_conv():
 '''
 samples = load_data()
 
-# over-sampling
-balanced_samples = data_preprocessing.over_sampling(samples)
+# shuffle
 
-# one hot encoding
-onehot = pd.get_dummies(balanced_samples['goodtime'], columns=['l1', 'l2'])
-data = pd.concat([balanced_samples, onehot], axis=1)
-data = data.drop('goodtime', axis=1)
+shuffle(samples)
 
 # normalize
-data_scaled = data_preprocessing.norm(data)
-
-# shuffle
-data_scaled = data_scaled.values.astype(np.float32)
-np.random.shuffle(data_scaled)
-assert not np.any(np.isnan(data_scaled))
+data_scaled = data_preprocessing.norm(samples)
 
 # train-test separation
 
@@ -139,15 +130,27 @@ sep = int(len(data_scaled) * 0.7)
 data_train = data_scaled[:sep]
 data_test = data_scaled[sep:]
 
-X_train = data_train[:, :-2]
-X_test = data_test[:, :-2]
-y_train = data_train[:, -2:]
-y_test = data_test[:, -2:]
+# over-sampling
+balanced_samples = data_preprocessing.over_sampling(data_train)
+
+# one hot encoding
+onehot_train = pd.get_dummies(balanced_samples.iloc[:, -1], columns=['l1', 'l2'])
+onehot_test = pd.get_dummies(data_test.iloc[:, -1], columns=['l1', 'l2'])
+
+balanced_samples = balanced_samples.iloc[:, :-1]
+data_test = data_test.iloc[:, :-1]
+
+assert not np.any(np.isnan(data_scaled))
 
 
-n_tsfresh = len(X_train[0])
+X_train = balanced_samples
+X_test = data_test
+y_train = onehot_train
+y_test = onehot_test
+
+
 model = mlp()
-model.compile(optimizer=SGD(0.01),
+model.compile(optimizer=SGD(0.0001),
               loss=categorical_crossentropy,
               metrics=[categorical_accuracy])
 
