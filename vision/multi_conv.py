@@ -151,9 +151,9 @@ print(model.summary())
 
 op_data, label = load_op_data()
 ts_data = load_data()
-ts_data, op_data = shuffle(ts_data, op_data)
+
 # over-sampling
-balanced_ts, balanced_op = data_preprocessing.over_sampling_op(ts_data, op_data)
+balanced_ts, balanced_op, indices = data_preprocessing.over_sampling_op(ts_data, op_data)
 
 
 # one hot encoding
@@ -164,7 +164,7 @@ balanced_ts = balanced_ts.drop('goodtime', axis=1)
 # for open pose data, there are 3 options: a)sample-wise normalization; b)feature-wise; c) batch norm
 ts_scaled = data_preprocessing.norm(balanced_ts)
 op_scaled = data_preprocessing.norm_op(balanced_op)
-
+ts_scaled, op_scaled = shuffle(ts_scaled, op_scaled)
 
 assert not np.any(np.isnan(ts_scaled))
 assert not np.any(np.isnan(op_scaled))
