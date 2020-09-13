@@ -15,7 +15,7 @@ from keras.layers.merge import concatenate
 from keras.optimizers import SGD
 from keras.optimizers import Adam
 from keras.losses import categorical_crossentropy
-from keras.metrics import categorical_accuracy
+from keras.metrics import categorical_accuracy, accuracy
 import data_preprocessing
 
 n_tsfresh = 480
@@ -197,7 +197,7 @@ op_test = np.expand_dims(op_test, axis=-1)
 
 model = multi_conv()
 model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
-              metrics=[categorical_accuracy, ])
+              metrics=[categorical_accuracy, accuracy])
 
 model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
           batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test))
