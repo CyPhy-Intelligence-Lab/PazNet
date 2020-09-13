@@ -196,7 +196,7 @@ balanced_op = np.expand_dims(balanced_op, axis=-1)
 op_test = np.expand_dims(op_test, axis=-1)
 
 model = multi_conv()
-model.compile(optimizer=Adam(learning_rate, decay=0.001), loss=categorical_crossentropy,
+model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
 model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
