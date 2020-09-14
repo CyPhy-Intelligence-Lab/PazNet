@@ -105,6 +105,16 @@ def multi_conv():
     return model
 
 
+def mlp():
+    visible1 = Input(shape=(n_tsfresh,))
+    hidden1 = Dense(128, activation='relu')(visible1)
+    hidden2 = Dense(128, activation='relu')(hidden1)
+    output = Dense(2, activation='softmax')(hidden2)
+    model = Model(inputs=visible1, output=output)
+    print(model.summary())
+
+    return model
+
 op_data, label = load_op_data()
 ts_data = load_data()
 ts_data = ts_data.drop('goodtime',axis=1)
@@ -122,7 +132,7 @@ for train_index, test_index in skf.split(data_concat, label):
 
     sm = SMOTE(random_state=0)
     oversampled_x_train, oversampled_y_train = sm.fit_resample(x_train, y_train)
-
+    承担后果
     accuracy = []
     # 5 round of under sampling
     for i in range(5):
@@ -155,16 +165,26 @@ for train_index, test_index in skf.split(data_concat, label):
         op_scaled = np.expand_dims(op_scaled, axis=-1)
         x_test_op_scaled = np.expand_dims(x_test_op_scaled, axis=-1)
 
+        '''
         model = multi_conv()
         model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
                       metrics=[categorical_accuracy, ])
 
         model.fit(x=[ts_scaled, op_scaled], y=onehot_train, epochs=100,
                   batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], onehot_test))
-        loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], onehot_test)
+        '''
+        model = mlp()
+        model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
+                      metrics=[categorical_accuracy, ])
+        model.fit(x=ts_scaled, y=onehot_train, epochs=300, batch_size=batch_size,
+                  validation_data=(x_test_ts_scaled, onehot_test))
+        loss, acc = model.evaluate(x_test_ts_scaled, onehot_test)
+        print(acc)
         accuracy.append(acc)
+    print(np.mean(accuracy))
     total_accuracy.append(accuracy)
 
 print(total_accuracy)
+print(np.mean(total_accuracy))
 
 
