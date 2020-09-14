@@ -260,7 +260,7 @@ def samplinghalfhalf(ts_data, op_data, ratio):
 
 def norm(data):
     min_max_scaler = preprocessing.MinMaxScaler()
-    data_scaled = min_max_scaler.fit_transform(data.values)
+    data_scaled = min_max_scaler.fit_transform(data)
     data_scaled = pd.DataFrame(data_scaled)
     return data_scaled
 
