@@ -175,7 +175,7 @@ for train_index, test_index in skf.split(data_concat, label):
         model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
                       metrics=[categorical_accuracy, ])
         model.fit(x=ts_scaled, y=onehot_train, epochs=1000, batch_size=batch_size,
-                  validation_data=(x_test_ts_scaled, onehot_test))
+                  validation_data=(x_test_ts_scaled, onehot_test), shuffle=True)
 
         loss, acc = model.evaluate(x_test_ts_scaled, onehot_test)
         print(acc)
