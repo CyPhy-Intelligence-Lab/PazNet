@@ -170,7 +170,7 @@ model = multi_conv()
 model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
-model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=5,
+model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=15,
           batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test))
 
 no_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1]==0]
