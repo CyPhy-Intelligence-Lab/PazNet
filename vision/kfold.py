@@ -156,7 +156,7 @@ for train_index, test_index in skf.split(data_concat, label):
         x_test_op_scaled = np.expand_dims(x_test_op_scaled, axis=-1)
 
         model = multi_conv()
-        model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
+        model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
                       metrics=[categorical_accuracy, ])
 
         model.fit(x=[ts_scaled, op_scaled], y=onehot_train, epochs=50,
