@@ -132,10 +132,9 @@ for train_index, test_index in skf.split(data_concat, label):
 
     sm = SMOTE(random_state=0)
     oversampled_x_train, oversampled_y_train = sm.fit_resample(x_train, y_train)
-    承担后果
     accuracy = []
-    # 5 round of under sampling
-    for i in range(5):
+    # 3 rounds of under sampling
+    for i in range(3):
         us = RandomUnderSampler(random_state=0)
         undersampled_x_test, undersampled_y_test = us.fit_resample(x_test, y_test)
 
