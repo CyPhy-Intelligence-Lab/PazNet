@@ -111,7 +111,6 @@ def mlp():
     hidden2 = Dense(128, activation='relu')(hidden1)
     output = Dense(2, activation='softmax')(hidden2)
     model = Model(inputs=visible1, output=output)
-    print(model.summary())
 
     return model
 
@@ -175,7 +174,7 @@ for train_index, test_index in skf.split(data_concat, label):
         model = mlp()
         model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
                       metrics=[categorical_accuracy, ])
-        model.fit(x=ts_scaled, y=onehot_train, epochs=500, batch_size=batch_size,
+        model.fit(x=ts_scaled, y=onehot_train, epochs=1000, batch_size=batch_size,
                   validation_data=(x_test_ts_scaled, onehot_test))
 
         loss, acc = model.evaluate(x_test_ts_scaled, onehot_test)
