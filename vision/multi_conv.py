@@ -28,7 +28,6 @@ learning_rate = float(sys.argv[1])
 batch_size = int(sys.argv[2])
 
 
-
 def load_data():
     ts = np.load('../data/concat_X_10hz_4_0.npy')
     ts_tsfresh = pd.read_csv('../data/tsfresh_features_4_0.csv')
@@ -166,20 +165,22 @@ assert not np.any(np.isnan(op_test))
 # reshape input2
 balanced_op = np.expand_dims(balanced_op, axis=-1)
 op_test = np.expand_dims(op_test, axis=-1)
-'''
+
 model = multi_conv()
 model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
-model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=500000,
+model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=5,
           batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test))
-'''
 
-model = conv()
-model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
-              metrics=[categorical_accuracy, ])
-model.fit(x=balanced_op, y=onehot_train, epochs=500000,
-          batch_size=batch_size, validation_data=(op_test, onehot_test))
+no_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1]==0]
+yes_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1]==1]
+loss, accuracy = model.evaluate(x=[ts_test.iloc[no_indices, :], op_test[no_indices]], y=onehot_test.iloc[no_indices, :])
+print("Performance on no")
+print("\nLoss: %.2f, Accuracy: %.2f%%" % (loss, accuracy*100))
+loss, accuracy = model.evaluate(x=[ts_test.iloc[yes_indices, :], op_test[yes_indices]], y=onehot_test.iloc[yes_indices, :])
+print("Performance on yes")
+print("\nLoss: %.2f, Accuracy: %.2f%%" % (loss, accuracy*100))
 print(model.summary())
 
 
