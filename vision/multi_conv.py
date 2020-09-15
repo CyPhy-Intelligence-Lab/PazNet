@@ -171,7 +171,8 @@ model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
 model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=50,
-          batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test))
+          batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test),
+          class_weight={0:5, 1:1})
 
 no_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1]==0]
 yes_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1]==1]
