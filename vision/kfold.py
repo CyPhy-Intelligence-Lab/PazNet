@@ -165,14 +165,18 @@ for train_index, test_index in skf.split(data_concat, label):
         op_scaled = np.expand_dims(op_scaled, axis=-1)
         x_test_op_scaled = np.expand_dims(x_test_op_scaled, axis=-1)
 
+        no_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 0]
+        yes_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 1]
 
         model = multi_conv()
         model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
                       metrics=[categorical_accuracy, ])
 
-        model.fit(x=[ts_scaled, op_scaled], y=onehot_train, epochs=100,
+        model.fit(x=[ts_scaled, op_scaled], y=onehot_train, epochs=80,
                   batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], onehot_test),
                   class_weight={0: 2, 1: 1})
+        loss, acc = model.evaluate(x=[x_test_ts_scaled.iloc[no_indices, :],
+                                      x_test_op_scaled[no_indices]], y=onehot_test.iloc[no_indices, :])
         '''
         model = mlp()
         model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
@@ -185,9 +189,8 @@ for train_index, test_index in skf.split(data_concat, label):
         print(acc)
         accuracy.append(acc)
 
-        no_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 0]
         no_loss, no_acc = model.evaluate(x_test_ts_scaled.iloc[no_indices, :], onehot_test.iloc[no_indices, :])
-        yes_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 1]
+
         yes_loss, yes_acc = model.evaluate(x_test_ts_scaled.iloc[yes_indices, :], onehot_test.iloc[yes_indices, :])
         print("accuracy on no: " + str(no_acc))
         print("accuracy on yes: " + str(yes_acc))
