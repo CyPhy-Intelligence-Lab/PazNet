@@ -134,7 +134,7 @@ for train_index, test_index in skf.split(data_concat, label):
     oversampled_x_train, oversampled_y_train = sm.fit_resample(x_train, y_train)
     accuracy = []
     # 5 rounds of under sampling
-    for i in range(5):
+    for i in range(1):
         us = RandomUnderSampler(random_state=0)
         #undersampled_x_test, undersampled_y_test = us.fit_resample(x_test, y_test)
         undersampled_x_test, undersampled_y_test = x_test, y_test
@@ -165,13 +165,14 @@ for train_index, test_index in skf.split(data_concat, label):
         op_scaled = np.expand_dims(op_scaled, axis=-1)
         x_test_op_scaled = np.expand_dims(x_test_op_scaled, axis=-1)
 
-        '''
+
         model = multi_conv()
         model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
                       metrics=[categorical_accuracy, ])
 
-        model.fit(x=[ts_scaled, op_scaled], y=onehot_train, epochs=100,
-                  batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], onehot_test))
+        model.fit(x=[ts_scaled, op_scaled], y=onehot_train, epochs=1500,
+                  batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], onehot_test),
+                  class_weight={0: 2, 1: 1})
         '''
         model = mlp()
         model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
@@ -179,7 +180,7 @@ for train_index, test_index in skf.split(data_concat, label):
         model.fit(x=ts_scaled, y=onehot_train, epochs=2000, batch_size=batch_size,
                   validation_data=(x_test_ts_scaled, onehot_test), shuffle=True,
                   class_weight={0: 2, 1: 1})
-
+        '''
         loss, acc = model.evaluate(x_test_ts_scaled, onehot_test)
         print(acc)
         accuracy.append(acc)
