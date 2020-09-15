@@ -175,14 +175,21 @@ for train_index, test_index in skf.split(data_concat, label):
         model = mlp()
         model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
                       metrics=[categorical_accuracy, ])
-        model.fit(x=ts_scaled, y=onehot_train, epochs=1000, batch_size=batch_size,
+        model.fit(x=ts_scaled, y=onehot_train, epochs=500, batch_size=batch_size,
                   validation_data=(x_test_ts_scaled, onehot_test), shuffle=True)
 
         loss, acc = model.evaluate(x_test_ts_scaled, onehot_test)
         print(acc)
         accuracy.append(acc)
-    print(np.mean(accuracy))
-    total_accuracy.append(accuracy)
+
+        no_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 0]
+        no_loss, no_acc = model.evaluate(x_test_ts_scaled[no_indices], onehot_test[no_indices])
+        yes_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 1]
+        yes_loss, yes_acc = model.evaluate(x_test_ts_scaled[yes_indices], onehot_test[yes_indices])
+        print("accuracy on no: " + str(no_acc))
+        print("accuracy on yes: " + str(yes_acc))
+
+    total_accuracy.append(np.mean(accuracy))
 
 print(total_accuracy)
 print(np.mean(total_accuracy))
