@@ -183,9 +183,9 @@ for train_index, test_index in skf.split(data_concat, label):
         accuracy.append(acc)
 
         no_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 0]
-        no_loss, no_acc = model.evaluate(x_test_ts_scaled[no_indices], onehot_test[no_indices])
+        no_loss, no_acc = model.evaluate(x_test_ts_scaled.iloc[no_indices, :], onehot_test.iloc[no_indices, :])
         yes_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 1]
-        yes_loss, yes_acc = model.evaluate(x_test_ts_scaled[yes_indices], onehot_test[yes_indices])
+        yes_loss, yes_acc = model.evaluate(x_test_ts_scaled.iloc[yes_indices, :], onehot_test.iloc[yes_indices, :])
         print("accuracy on no: " + str(no_acc))
         print("accuracy on yes: " + str(yes_acc))
 
