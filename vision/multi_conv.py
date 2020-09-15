@@ -142,7 +142,7 @@ ts_scaled = data_preprocessing.norm(ts_data)
 op_scaled = data_preprocessing.norm_op(op_data)
 
 # train-test split
-sep = int(len(ts_scaled) * 0.9)
+sep = int(len(ts_scaled) * 0.7)
 ts_train, op_train = ts_scaled[:sep], op_scaled[:sep]
 ts_test, op_test = ts_scaled[sep:], op_scaled[sep:]
 
@@ -170,7 +170,7 @@ model = multi_conv()
 model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
               metrics=[categorical_accuracy, ])
 
-model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=100,
+model.fit(x=[balanced_ts, balanced_op], y=onehot_train, epochs=50,
           batch_size=batch_size, validation_data=([ts_test, op_test], onehot_test))
 
 no_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1]==0]
