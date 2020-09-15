@@ -121,7 +121,7 @@ ts_data = ts_data.drop('goodtime',axis=1)
 op_data = op_data.reshape(-1, 60*252)
 data_concat = np.concatenate([ts_data, op_data], axis=1)
 
-skf = StratifiedKFold(n_splits=5)
+skf = StratifiedKFold(n_splits=10)
 total_accuracy = []
 for train_index, test_index in skf.split(data_concat, label):
     x_train = data_concat[train_index]
@@ -135,8 +135,8 @@ for train_index, test_index in skf.split(data_concat, label):
     # 5 rounds of under sampling
     for i in range(5):
         us = RandomUnderSampler(random_state=0)
-        #undersampled_x_test, undersampled_y_test = us.fit_resample(x_test, y_test)
-        undersampled_x_test, undersampled_y_test = x_test, y_test
+        undersampled_x_test, undersampled_y_test = us.fit_resample(x_test, y_test)
+        #undersampled_x_test, undersampled_y_test = x_test, y_test
 
         x_ts = oversampled_x_train[:, :472]
         x_test_ts = undersampled_x_test[:, :472]
