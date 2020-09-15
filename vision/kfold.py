@@ -20,6 +20,7 @@ import data_preprocessing
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.model_selection import StratifiedKFold
+from sklearn.utils.class_weight import compute_class_weight
 
 n_tsfresh = 472
 n_body_pose = 14 * 2
@@ -176,7 +177,8 @@ for train_index, test_index in skf.split(data_concat, label):
         model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
                       metrics=[categorical_accuracy, ])
         model.fit(x=ts_scaled, y=onehot_train, epochs=500, batch_size=batch_size,
-                  validation_data=(x_test_ts_scaled, onehot_test), shuffle=True)
+                  validation_data=(x_test_ts_scaled, onehot_test), shuffle=True,
+                  class_weight={0: 10, 1: 1})
 
         loss, acc = model.evaluate(x_test_ts_scaled, onehot_test)
         print(acc)
