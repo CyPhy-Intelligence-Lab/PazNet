@@ -93,18 +93,18 @@ def multi_conv():
 
     # second input model: all open pose (60, 252)
     visible2 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
-    conv21 = Conv2D(8, kernel_size=3, activation='relu')(visible2)
+    conv21 = Conv2D(64, kernel_size=3, activation='relu')(visible2)
     pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
-    conv22 = Conv2D(4, kernel_size=3, activation='relu')(pool21)
+    conv22 = Conv2D(32, kernel_size=3, activation='relu')(pool21)
     pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
     flat2 = Flatten()(pool22)
 
     # merge input models
     merge = concatenate([visible1, flat2])
     hidden1 = Dense(128, activation='relu')(merge)
-    dropout1 = Dropout(0.3)(hidden1)
+    dropout1 = Dropout(0.5)(hidden1)
     hidden2 = Dense(128, activation='relu')(dropout1)
-    dropout2 = Dropout(0.3)(hidden2)
+    dropout2 = Dropout(0.5)(hidden2)
     output = Dense(2, activation='softmax')(dropout2)
     model = Model(inputs=[visible1, visible2], output=output)
 
@@ -142,7 +142,7 @@ ts_scaled = data_preprocessing.norm(ts_data)
 op_scaled = data_preprocessing.norm_op(op_data)
 
 # train-test split
-sep = int(len(ts_scaled) * 0.7)
+sep = int(len(ts_scaled) * 0.9)
 ts_train, op_train = ts_scaled[:sep], op_scaled[:sep]
 ts_test, op_test = ts_scaled[sep:], op_scaled[sep:]
 
