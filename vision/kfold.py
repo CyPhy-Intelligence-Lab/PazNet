@@ -175,7 +175,11 @@ for train_index, test_index in skf.split(data_concat, label):
         model.fit(x=[ts_scaled, op_scaled], y=onehot_train, epochs=80,
                   batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], onehot_test),
                   class_weight={0: 2, 1: 1})
-        loss, acc = model.evaluate(x=[x_test_ts_scaled.iloc[no_indices, :],
+
+        loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], onehot_test)
+        loss, no_acc = model.evaluate(x=[x_test_ts_scaled.iloc[no_indices, :],
+                                      x_test_op_scaled[no_indices]], y=onehot_test.iloc[no_indices, :])
+        loss, yes_acc = model.evaluate(x=[x_test_ts_scaled.iloc[no_indices, :],
                                       x_test_op_scaled[no_indices]], y=onehot_test.iloc[no_indices, :])
         '''
         model = mlp()
@@ -184,14 +188,13 @@ for train_index, test_index in skf.split(data_concat, label):
         model.fit(x=ts_scaled, y=onehot_train, epochs=2000, batch_size=batch_size,
                   validation_data=(x_test_ts_scaled, onehot_test), shuffle=True,
                   class_weight={0: 2, 1: 1})
-        '''
+
         loss, acc = model.evaluate(x_test_ts_scaled, onehot_test)
-        print(acc)
         accuracy.append(acc)
-
         no_loss, no_acc = model.evaluate(x_test_ts_scaled.iloc[no_indices, :], onehot_test.iloc[no_indices, :])
-
         yes_loss, yes_acc = model.evaluate(x_test_ts_scaled.iloc[yes_indices, :], onehot_test.iloc[yes_indices, :])
+        '''
+        print(acc)
         print("accuracy on no: " + str(no_acc))
         print("accuracy on yes: " + str(yes_acc))
 
