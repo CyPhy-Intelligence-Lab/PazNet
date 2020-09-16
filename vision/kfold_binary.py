@@ -203,7 +203,7 @@ for train_index, test_index in skf.split(data_concat, label):
 
         model.fit(x=[ts_scaled, op_scaled], y=oversampled_y_train, epochs=20,
                   batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test),
-                  class_weight={0: 10, 1: 1})
+                  class_weight={0: 2, 1: 1})
 
 
         #loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
@@ -218,10 +218,10 @@ for train_index, test_index in skf.split(data_concat, label):
         model.fit(x=ts_scaled, y=oversampled_y_train, epochs=2000, batch_size=batch_size,
                   validation_data=(x_test_ts_scaled, y_test), shuffle=True)
         '''
-        loss, acc, pre, recall = model.evaluate(x_test_ts_scaled, y_test)
-        accuracy.append(acc)
-        no_loss, no_acc = model.evaluate(x_test_ts_scaled.iloc[no_indices, :], y_test[no_indices])
-        yes_loss, yes_acc = model.evaluate(x_test_ts_scaled.iloc[yes_indices, :], y_test[yes_indices])
+        loss, acc, pre, recall = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
+        #accuracy.append(acc)
+        #no_loss, no_acc = model.evaluate(x_test_ts_scaled.iloc[no_indices, :], y_test[no_indices])
+        #yes_loss, yes_acc = model.evaluate(x_test_ts_scaled.iloc[yes_indices, :], y_test[yes_indices])
 
         #print(acc)
         #print("accuracy on no: " + str(no_acc))
