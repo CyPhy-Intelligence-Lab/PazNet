@@ -22,6 +22,8 @@ from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.model_selection import StratifiedKFold
 from sklearn.utils.class_weight import compute_class_weight
+from sklearn import svm
+from sklearn.metrics import classification_report
 
 n_tsfresh = 472
 n_body_pose = 14 * 2
@@ -157,8 +159,8 @@ for train_index, test_index in skf.split(data_concat, label):
     # 5 rounds of under sampling
     for i in range(1):
         us = RandomUnderSampler(random_state=0)
-        #undersampled_x_test, undersampled_y_test = us.fit_resample(x_test, y_test)
-        undersampled_x_test, undersampled_y_test = x_test, y_test
+        undersampled_x_test, undersampled_y_test = us.fit_resample(x_test, y_test)
+        #undersampled_x_test, undersampled_y_test = x_test, y_test
 
         x_ts = oversampled_x_train[:, :472]
         x_test_ts = undersampled_x_test[:, :472]
@@ -203,6 +205,7 @@ for train_index, test_index in skf.split(data_concat, label):
                   batch_size=batch_size, validation_data=(x_test_op_scaled, undersampled_y_test),
                   )
 
+
         #loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
         #loss, no_acc = model.evaluate(x=[x_test_ts_scaled.iloc[no_indices, :],
         #                              x_test_op_scaled[no_indices]], y=undersampled_y_test[no_indices])
@@ -214,12 +217,12 @@ for train_index, test_index in skf.split(data_concat, label):
                       metrics=metrics)
         model.fit(x=ts_scaled, y=oversampled_y_train, epochs=2000, batch_size=batch_size,
                   validation_data=(x_test_ts_scaled, y_test), shuffle=True)
-
-        loss, acc = model.evaluate(x_test_ts_scaled, y_test)
+        '''
+        loss, acc, pre, recall = model.evaluate(x_test_ts_scaled, y_test)
         accuracy.append(acc)
         no_loss, no_acc = model.evaluate(x_test_ts_scaled.iloc[no_indices, :], y_test[no_indices])
         yes_loss, yes_acc = model.evaluate(x_test_ts_scaled.iloc[yes_indices, :], y_test[yes_indices])
-        '''
+
         #print(acc)
         #print("accuracy on no: " + str(no_acc))
         #print("accuracy on yes: " + str(yes_acc))
