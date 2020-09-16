@@ -177,7 +177,7 @@ for train_index, test_index in skf.split(data_concat, label):
                    keras.metrics.Precision(name='precision'),
                    keras.metrics.Recall(name='recall'),
                    keras.metrics.AUC(name='auc')]
-
+        '''
         model = multi_conv()
         model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
                       metrics= metrics)
@@ -197,13 +197,13 @@ for train_index, test_index in skf.split(data_concat, label):
                       metrics=[categorical_accuracy, ])
         model.fit(x=ts_scaled, y=onehot_train, epochs=2000, batch_size=batch_size,
                   validation_data=(x_test_ts_scaled, onehot_test), shuffle=True,
-                  class_weight={0: 2, 1: 1})
+                  )
 
         loss, acc = model.evaluate(x_test_ts_scaled, onehot_test)
         accuracy.append(acc)
         no_loss, no_acc = model.evaluate(x_test_ts_scaled.iloc[no_indices, :], onehot_test.iloc[no_indices, :])
         yes_loss, yes_acc = model.evaluate(x_test_ts_scaled.iloc[yes_indices, :], onehot_test.iloc[yes_indices, :])
-        '''
+
         print(acc)
         print("accuracy on no: " + str(no_acc))
         print("accuracy on yes: " + str(yes_acc))

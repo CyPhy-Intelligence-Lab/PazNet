@@ -6,7 +6,7 @@ import tensorflow as tf
 from sklearn.linear_model import LogisticRegression
 from matplotlib import pyplot
 
-TRAIN = False
+TRAIN = True
 
 ts = np.load('../data/concat_X_10hz_4_0.npy')
 ts_tsfresh = pd.read_csv('../data/tsfresh_features_4_0.csv')
@@ -27,6 +27,7 @@ samples['goodtime'] = pd.Series(labels)
 samples = samples.drop('id', axis=1)
 
 data = data_preprocessing.over_sampling(samples)
+#data = samples
 
 onehot = pd.get_dummies(data['goodtime'], columns=['l1', 'l2'])
 data = data.drop('goodtime', axis=1)
