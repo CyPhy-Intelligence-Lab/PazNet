@@ -107,6 +107,26 @@ def multi_conv():
     return model
 
 
+def conv():
+    visible1 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
+    conv1 = Conv2D(32, kernel_size=3, activation='relu')(visible1)
+    pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
+    conv2 = Conv2D(16, kernel_size=3, activation='relu')(pool1)
+    pool2 = MaxPooling2D(pool_size=(2, 2))(conv2)
+    flat2 = Flatten()(pool2)
+
+    hidden1 = Dense(128, activation='relu')(flat2)
+    dropout1 = Dropout(0.3)(hidden1)
+    hidden2 = Dense(128, activation='relu')(dropout1)
+    dropout2 = Dropout(0.3)(hidden2)
+    output = Dense(1, activation='sigmoid')(dropout2)
+    model = Model(inputs=visible1, output=output)
+
+    print(model.summary())
+
+    return model
+
+
 def mlp():
     visible1 = Input(shape=(n_tsfresh,))
     hidden1 = Dense(128, activation='relu')(visible1)
@@ -137,8 +157,8 @@ for train_index, test_index in skf.split(data_concat, label):
     # 5 rounds of under sampling
     for i in range(1):
         us = RandomUnderSampler(random_state=0)
-        undersampled_x_test, undersampled_y_test = us.fit_resample(x_test, y_test)
-        #undersampled_x_test, undersampled_y_test = x_test, y_test
+        #undersampled_x_test, undersampled_y_test = us.fit_resample(x_test, y_test)
+        undersampled_x_test, undersampled_y_test = x_test, y_test
 
         x_ts = oversampled_x_train[:, :472]
         x_test_ts = undersampled_x_test[:, :472]
@@ -175,12 +195,12 @@ for train_index, test_index in skf.split(data_concat, label):
                    keras.metrics.Recall(name='recall'),
                    keras.metrics.AUC(name='auc')]
 
-        model = multi_conv()
+        model = conv()
         model.compile(optimizer=Adam(learning_rate), loss=binary_crossentropy,
                       metrics=metrics)
 
-        model.fit(x=[ts_scaled, op_scaled], y=oversampled_y_train, epochs=20,
-                  batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test),
+        model.fit(x= op_scaled, y=oversampled_y_train, epochs=20,
+                  batch_size=batch_size, validation_data=(x_test_op_scaled, undersampled_y_test),
                   )
 
         #loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
