@@ -203,7 +203,7 @@ for train_index, test_index in skf.split(data_concat, label):
 
         model.fit(x=[ts_scaled, op_scaled], y=oversampled_y_train, epochs=20,
                   batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test),
-                  class_weight={0: 300, 1: 1})
+                  class_weight={0: 10, 1: 1})
 
 
         #loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
