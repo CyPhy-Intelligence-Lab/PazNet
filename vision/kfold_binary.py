@@ -15,7 +15,7 @@ from keras.layers import Dropout
 from keras.layers.merge import concatenate
 from keras.optimizers import SGD
 from keras.optimizers import Adam
-from keras.losses import categorical_crossentropy
+from keras.losses import binary_crossentropy
 from keras.metrics import categorical_accuracy
 import data_preprocessing
 from imblearn.over_sampling import SMOTE
@@ -99,7 +99,7 @@ def multi_conv():
     dropout1 = Dropout(0.3)(hidden1)
     hidden2 = Dense(128, activation='relu')(dropout1)
     dropout2 = Dropout(0.3)(hidden2)
-    output = Dense(2, activation='softmax')(dropout2)
+    output = Dense(1, activation='sigmoid')(dropout2)
     model = Model(inputs=[visible1, visible2], output=output)
 
     print(model.summary())
@@ -111,7 +111,7 @@ def mlp():
     visible1 = Input(shape=(n_tsfresh,))
     hidden1 = Dense(128, activation='relu')(visible1)
     hidden2 = Dense(128, activation='relu')(hidden1)
-    output = Dense(2, activation='softmax')(hidden2)
+    output = Dense(1, activation='sigmoid')(hidden2)
     model = Model(inputs=visible1, output=output)
 
     return model
@@ -154,43 +154,40 @@ for train_index, test_index in skf.split(data_concat, label):
         op_scaled = data_preprocessing.norm_op(x_op)
         x_test_op_scaled = data_preprocessing.norm_op(x_test_op)
 
-        onehot_train = pd.get_dummies(oversampled_y_train, columns=['l1', 'l2'])
-        onehot_test = pd.get_dummies(undersampled_y_test, columns=['l1', 'l2'])
-
         assert not np.any(np.isnan(ts_scaled))
         assert not np.any(np.isnan(op_scaled))
-        assert not np.any(np.isnan(onehot_train))
-        assert not np.any(np.isnan(onehot_test))
+        assert not np.any(np.isnan(oversampled_y_train))
+        assert not np.any(np.isnan(y_test))
 
         # reshape input2
         op_scaled = np.expand_dims(op_scaled, axis=-1)
         x_test_op_scaled = np.expand_dims(x_test_op_scaled, axis=-1)
 
-        no_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 0]
-        yes_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 1]
+        no_indices = [i for i in range(len(y_test)) if y_test[i] == 0]
+        yes_indices = [i for i in range(len(y_test)) if y_test[i] == 1]
 
         metrics = [keras.metrics.TruePositives(name='tp'),
                    keras.metrics.FalsePositives(name='fp'),
                    keras.metrics.TrueNegatives(name='tn'),
                    keras.metrics.FalseNegatives(name='fn'),
-                   keras.metrics.CategoricalAccuracy(name='categorical_accuracy'),
+                   keras.metrics.BinaryAccuracy(name='accuracy'),
                    keras.metrics.Precision(name='precision'),
                    keras.metrics.Recall(name='recall'),
                    keras.metrics.AUC(name='auc')]
 
         model = multi_conv()
-        model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
-                      metrics= metrics)
+        model.compile(optimizer=Adam(learning_rate), loss=binary_crossentropy,
+                      metrics=metrics)
 
-        model.fit(x=[ts_scaled, op_scaled], y=onehot_train, epochs=20,
-                  batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], onehot_test),
+        model.fit(x=[ts_scaled, op_scaled], y=oversampled_y_train, epochs=20,
+                  batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], y_test),
                   )
 
-        loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], onehot_test)
+        loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], y_test)
         loss, no_acc = model.evaluate(x=[x_test_ts_scaled.iloc[no_indices, :],
-                                      x_test_op_scaled[no_indices]], y=onehot_test.iloc[no_indices, :])
+                                      x_test_op_scaled[no_indices]], y=y_test[no_indices])
         loss, yes_acc = model.evaluate(x=[x_test_ts_scaled.iloc[yes_indices, :],
-                                      x_test_op_scaled[yes_indices]], y=onehot_test.iloc[yes_indices, :])
+                                      x_test_op_scaled[yes_indices]], y=y_test[yes_indices])
         '''
         model = mlp()
         model.compile(optimizer=SGD(learning_rate), loss=categorical_crossentropy,
