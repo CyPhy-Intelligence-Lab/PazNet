@@ -183,11 +183,11 @@ for train_index, test_index in skf.split(data_concat, label):
                   batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test),
                   )
 
-        loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
-        loss, no_acc = model.evaluate(x=[x_test_ts_scaled.iloc[no_indices, :],
-                                      x_test_op_scaled[no_indices]], y=undersampled_y_test[no_indices])
-        loss, yes_acc = model.evaluate(x=[x_test_ts_scaled.iloc[yes_indices, :],
-                                      x_test_op_scaled[yes_indices]], y=undersampled_y_test[yes_indices])
+        #loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
+        #loss, no_acc = model.evaluate(x=[x_test_ts_scaled.iloc[no_indices, :],
+        #                              x_test_op_scaled[no_indices]], y=undersampled_y_test[no_indices])
+        #loss, yes_acc = model.evaluate(x=[x_test_ts_scaled.iloc[yes_indices, :],
+        #                              x_test_op_scaled[yes_indices]], y=undersampled_y_test[yes_indices])
         '''
         model = mlp()
         model.compile(optimizer=SGD(learning_rate), loss=binary_crossentropy,
@@ -200,9 +200,9 @@ for train_index, test_index in skf.split(data_concat, label):
         no_loss, no_acc = model.evaluate(x_test_ts_scaled.iloc[no_indices, :], y_test[no_indices])
         yes_loss, yes_acc = model.evaluate(x_test_ts_scaled.iloc[yes_indices, :], y_test[yes_indices])
         '''
-        print(acc)
-        print("accuracy on no: " + str(no_acc))
-        print("accuracy on yes: " + str(yes_acc))
+        #print(acc)
+        #print("accuracy on no: " + str(no_acc))
+        #print("accuracy on yes: " + str(yes_acc))
 
     total_accuracy.append(np.mean(accuracy))
 
