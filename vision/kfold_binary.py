@@ -37,8 +37,18 @@ batch_size = int(sys.argv[2])
 
 def load_data():
     ts = np.load('../data/concat_X_10hz_4_0.npy')
-    ts_tsfresh = pd.read_csv('../data/tsfresh_features_4_0.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_4_0.csv')
     #ts_tsfresh = pd.read_csv('../data/tsfresh_features_5_0.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_6_0.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_6_1.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_6_2.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_6_3.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_6_4.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_6_5.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_6_6.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_6_7.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_6_8.csv')
+    ts_tsfresh = pd.read_csv('../data/tsfresh_features_6_9.csv')
 
     obj = pd.read_csv('../data/concat_objects.csv',
                       usecols=['person', 'bicyle', 'car', 'motorcycle', 'bus', 'truck', 'traffic light',
@@ -146,6 +156,10 @@ def mlp():
     return model
 
 op_data, label = load_op_data()
+yes = [i for i in label if i==1]
+no = [i for i in label if i==0]
+print(len(yes))
+print(len(no))
 ts_data = load_data()
 ts_data = ts_data.drop('goodtime',axis=1)
 
