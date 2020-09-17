@@ -38,9 +38,16 @@ batch_size = int(sys.argv[2])
 def load_data():
     ts = np.load('../data/concat_X_10hz_4_0.npy')
     ts_tsfresh = pd.read_csv('../data/tsfresh_features_4_0.csv')
+    #ts_tsfresh = pd.read_csv('../data/tsfresh_features_5_0.csv')
+
     obj = pd.read_csv('../data/concat_objects.csv',
                       usecols=['person', 'bicyle', 'car', 'motorcycle', 'bus', 'truck', 'traffic light',
                                'stop sign'])
+
+    #obj = pd.read_csv('../data/concat_objects_5.csv',
+    #                  usecols=['person', 'bicyle', 'car', 'motorcycle', 'bus', 'truck', 'traffic light',
+    #                           'stop sign'])
+
     label = np.load('../data/concat_label.npy')
 
     concat_matrix = pd.concat([ts_tsfresh, obj], axis=1)
@@ -147,6 +154,8 @@ data_concat = np.concatenate([ts_data, op_data], axis=1)
 
 skf = StratifiedKFold(n_splits=10)
 total_accuracy = []
+total_recall = []
+total_precision = []
 for train_index, test_index in skf.split(data_concat, label):
     x_train = data_concat[train_index]
     y_train = label[train_index]
@@ -156,6 +165,8 @@ for train_index, test_index in skf.split(data_concat, label):
     sm = SMOTE(random_state=0)
     oversampled_x_train, oversampled_y_train = sm.fit_resample(x_train, y_train)
     accuracy = []
+    precision = []
+    recall = []
     # 5 rounds of under sampling
     for i in range(1):
         us = RandomUnderSampler(random_state=0)
@@ -218,18 +229,24 @@ for train_index, test_index in skf.split(data_concat, label):
         model.fit(x=ts_scaled, y=oversampled_y_train, epochs=2000, batch_size=batch_size,
                   validation_data=(x_test_ts_scaled, y_test), shuffle=True)
         '''
-        #loss, acc, pre, recall = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
-        #accuracy.append(acc)
+        loss, tp, fp, tn, fn, acc, pre, recall, ruc\
+            = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
+        accuracy.append(acc)
+        precision.append(pre)
+        recall.append(recall)
         #no_loss, no_acc = model.evaluate(x_test_ts_scaled.iloc[no_indices, :], y_test[no_indices])
         #yes_loss, yes_acc = model.evaluate(x_test_ts_scaled.iloc[yes_indices, :], y_test[yes_indices])
 
         #print(acc)
         #print("accuracy on no: " + str(no_acc))
         #print("accuracy on yes: " + str(yes_acc))
-
+    total_precision.append(np.mean(precision))
+    total_recall.append(np.mean(recall))
     total_accuracy.append(np.mean(accuracy))
 
 print(total_accuracy)
 print(np.mean(total_accuracy))
+print(np.mean(total_precision))
+print(np.mean(total_recall))
 
 
