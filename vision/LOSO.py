@@ -145,7 +145,7 @@ for train_index, test_index in loso.split(data_concat, label, groups):
     oversampled_x_train, oversampled_y_train = sm.fit_resample(x_train, y_train)
     accuracy = []
     precision = []
-    recall = []
+    recalls = []
     # 5 rounds of under sampling
     for i in range(1):
         us = RandomUnderSampler(random_state=0)
@@ -191,10 +191,8 @@ for train_index, test_index in loso.split(data_concat, label, groups):
         model.compile(optimizer=Adam(learning_rate), loss=binary_crossentropy,
                       metrics=metrics)
 
-        model.fit(x=[ts_scaled, op_scaled], y=oversampled_y_train, epochs=20,
-                  batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test),
-                  class_weight={0: 5, 1: 1})
-        model.save("11weight.h5")
+        model.fit(x=[ts_scaled, op_scaled], y=oversampled_y_train, epochs=50,
+                  batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test))
 
         # loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
         # loss, no_acc = model.evaluate(x=[x_test_ts_scaled.iloc[no_indices, :],
@@ -212,7 +210,7 @@ for train_index, test_index in loso.split(data_concat, label, groups):
             = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
         accuracy.append(acc)
         precision.append(pre)
-        recall.append(recall)
+        recalls.append(recall)
         # no_loss, no_acc = model.evaluate(x_test_ts_scaled.iloc[no_indices, :], y_test[no_indices])
         # yes_loss, yes_acc = model.evaluate(x_test_ts_scaled.iloc[yes_indices, :], y_test[yes_indices])
 
@@ -220,7 +218,7 @@ for train_index, test_index in loso.split(data_concat, label, groups):
         # print("accuracy on no: " + str(no_acc))
         # print("accuracy on yes: " + str(yes_acc))
     total_precision.append(np.mean(precision))
-    total_recall.append(np.mean(recall))
+    total_recall.append(np.mean(recalls))
     total_accuracy.append(np.mean(accuracy))
 
 print(total_accuracy)
