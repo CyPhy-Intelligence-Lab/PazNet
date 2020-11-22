@@ -93,7 +93,7 @@ def multi_conv():
     dropout1 = Dropout(0.3)(hidden1)
     hidden2 = Dense(128, activation='relu')(dropout1)
     dropout2 = Dropout(0.3)(hidden2)
-    output = Dense(2, activation='softmax')(dropout2)
+    output = Dense(1, activation='softmax')(dropout2)
     model = Model(inputs=[visible1, visible2], output=output)
 
     print(model.summary())
