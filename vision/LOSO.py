@@ -141,6 +141,10 @@ for train_index, test_index in loso.split(data_concat, label, groups):
     x_test = data_concat[test_index]
     y_test = label[test_index]
 
+    # remove subjects that only have one type of answer
+    if np.all(y_test == y_test[0]):
+        continue
+
     sm = SMOTE(random_state=0)
     oversampled_x_train, oversampled_y_train = sm.fit_resample(x_train, y_train)
     accuracy = []
