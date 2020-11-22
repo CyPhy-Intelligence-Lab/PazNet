@@ -66,12 +66,7 @@ def load_op_data():
     body_op_y = np.delete(body_op_y, [10, 11, 13, 14, 18, 19, 20, 21, 22, 23, 24], 2)
     body_op_c = np.delete(body_op_c, [10, 11, 13, 14, 18, 19, 20, 21, 22, 23, 24], 2)
 
-    '''
-    return np.nan_to_num(body_op_x), np.nan_to_num(body_op_y), np.nan_to_num(body_op_c), \
-           np.nan_to_num(lhand_op_x), np.nan_to_num(lhand_op_y), np.nan_to_num(lhand_op_c), \
-           np.nan_to_num(rhand_op_x), np.nan_to_num(rhand_op_y), np.nan_to_num(rhand_op_c), \
-           np.nan_to_num(face_op_x), np.nan_to_num(face_op_y), np.nan_to_num(face_op_c)
-    '''
+    
     concat = np.concatenate((body_op_x, body_op_y, lhand_op_x, lhand_op_y,
                                     rhand_op_x, rhand_op_y, face_op_x, face_op_y), axis = 2)
 
@@ -119,17 +114,17 @@ data_concat = np.concatenate([ts_data, op_data], axis=1)
 
 concat_objects = pd.read_csv('../data/concat_objects.csv')
 subject_id = concat_objects['clipname'].str.slice(stop=4)
-group_list = [[]]
+group_list = []
 prev = 'm026'
 i = 0
 n = 0
 for item in subject_id:
     if item == prev:
-        group_list[i].append(n)
+        group_list.append(i)
         prev = item
         n += 1
     else:
-        group_list.append([n])
+        group_list.append(i)
         prev = item
         i += 1
         n += 1
