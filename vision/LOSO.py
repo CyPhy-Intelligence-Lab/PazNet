@@ -93,7 +93,7 @@ def multi_conv():
     dropout1 = Dropout(0.3)(hidden1)
     hidden2 = Dense(128, activation='relu')(dropout1)
     dropout2 = Dropout(0.3)(hidden2)
-    output = Dense(1, activation='softmax')(dropout2)
+    output = Dense(2, activation='softmax')(dropout2)
     model = Model(inputs=[visible1, visible2], output=output)
 
     print(model.summary())
@@ -170,6 +170,9 @@ for train_index, test_index in loso.split(data_concat, label, groups):
         op_scaled = data_preprocessing.norm_op(x_op)
         x_test_op_scaled = data_preprocessing.norm_op(x_test_op)
 
+        onehot_train = pd.get_dummies(oversampled_y_train, columns=['l1', 'l2'])
+        onehot_test = pd.get_dummies(undersampled_y_test, columns=['l1', 'l2'])
+
         assert not np.any(np.isnan(ts_scaled))
         assert not np.any(np.isnan(op_scaled))
         assert not np.any(np.isnan(oversampled_y_train))
@@ -179,8 +182,8 @@ for train_index, test_index in loso.split(data_concat, label, groups):
         op_scaled = np.expand_dims(op_scaled, axis=-1)
         x_test_op_scaled = np.expand_dims(x_test_op_scaled, axis=-1)
 
-        no_indices = [i for i in range(len(undersampled_y_test)) if undersampled_y_test[i] == 0]
-        yes_indices = [i for i in range(len(undersampled_y_test)) if undersampled_y_test[i] == 1]
+        no_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 0]
+        yes_indices = [i for i in range(len(onehot_test)) if onehot_test.iloc[i, -1] == 1]
 
         metrics = [keras.metrics.TruePositives(name='tp'),
                    keras.metrics.FalsePositives(name='fp'),
@@ -192,11 +195,11 @@ for train_index, test_index in loso.split(data_concat, label, groups):
                    keras.metrics.AUC(name='auc')]
 
         model = multi_conv()
-        model.compile(optimizer=Adam(learning_rate), loss=binary_crossentropy,
+        model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy,
                       metrics=metrics)
 
-        model.fit(x=[ts_scaled, op_scaled], y=oversampled_y_train, epochs=50,
-                  batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test))
+        model.fit(x=[ts_scaled, op_scaled], y=onehot_train, epochs=50,
+                  batch_size=batch_size, validation_data=([x_test_ts_scaled, x_test_op_scaled], onehot_test))
 
         # loss, acc = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
         # loss, no_acc = model.evaluate(x=[x_test_ts_scaled.iloc[no_indices, :],
@@ -211,7 +214,7 @@ for train_index, test_index in loso.split(data_concat, label, groups):
                   validation_data=(x_test_ts_scaled, y_test), shuffle=True)
         '''
         loss, tp, fp, tn, fn, acc, pre, recall, ruc \
-            = model.evaluate([x_test_ts_scaled, x_test_op_scaled], undersampled_y_test)
+            = model.evaluate([x_test_ts_scaled, x_test_op_scaled], onehot_test)
         accuracy.append(acc)
         precision.append(pre)
         recalls.append(recall)
