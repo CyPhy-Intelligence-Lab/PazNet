@@ -36,7 +36,8 @@ def feature_extractor():
 
     rgb_variable_map = {}
     for variable in tf.global_variables():
-        rgb_variable_map[variable.name.replace(':0', '')[len('inception_i3d/'):]] = variable
+        #rgb_variable_map[variable.name.replace(':0', '')[len('inception_i3d/'):]] = variable
+        rgb_variable_map['RGB/' + variable.name.replace(':0', '')] = variable
     saver = tf.train.Saver(var_list=rgb_variable_map)
 
     saver.restore(sess, _CHECKPOINT_PATHS['rgb_imagenet'])
