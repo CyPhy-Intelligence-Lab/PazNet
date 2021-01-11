@@ -1,0 +1,608 @@
+INFO:logger:Namespace(data_aug='v1', data_dir='', data_list='video.txt', dtype='float32', fast_temporal_stride=2, gpu_id=2, hashtag='', input_size=224, log_interval=10, mode=None, model='i3d_resnet50_v1_kinetics400', need_root=False, new_height=256, new_length=64, new_step=1, new_width=340, num_classes=400, num_crop=1, num_segments=10, resume_params='', save_dir='/home/tongwu/INAGT2/INAGT2/data/i3d_features_new', slow_temporal_stride=16, slowfast=False, ten_crop=False, three_crop=False, use_decord=True, use_pretrained=True, video_loader=True)
+INFO:logger:Pre-trained model is successfully loaded from the model zoo.
+INFO:logger:Successfully built model i3d_resnet50_v1_kinetics400
+INFO:logger:Load 3198 video samples.
+[21:27:18] src/operator/nn/./cudnn/./cudnn_algoreg-inl.h:97: Running performance tests to find the best convolution algorithm, this can take a while... (set the environment variable MXNET_CUDNN_AUTOTUNE_DEFAULT to 0 to disable)
+INFO:logger:m061_1513191980.84272.mov_road.mp4
+INFO:logger:m061_1513192795.902747.mov_road.mp4
+INFO:logger:m061_1513191472.723762.mov_road.mp4
+INFO:logger:m061_1513191714.284019.mov_road.mp4
+INFO:logger:m061_1513191640.641416.mov_road.mp4
+INFO:logger:m061_1513193034.832843.mov_road.mp4
+INFO:logger:m061_1513192179.125134.mov_road.mp4
+INFO:logger:m061_1513189803.802753.mov_road.mp4
+INFO:logger:m061_1513192411.692394.mov_road.mp4
+INFO:logger:m061_1513193247.756599.mov_road.mp4
+INFO:logger:m061_1513192219.762609.mov_road.mp4
+INFO:logger:0010/3198 is done
+INFO:logger:m061_1513191102.527644.mov_road.mp4
+INFO:logger:m061_1513191318.435781.mov_road.mp4
+INFO:logger:m061_1513193082.474875.mov_road.mp4
+INFO:logger:m061_1513191416.0793343.mov_road.mp4
+INFO:logger:m061_1513191942.2020679.mov_road.mp4
+INFO:logger:m061_1513189962.026337.mov_road.mp4
+INFO:logger:m061_1513191244.800912.mov_road.mp4
+INFO:logger:m061_1513190786.954351.mov_road.mp4
+INFO:logger:m061_1513192064.481841.mov_road.mp4
+INFO:logger:m061_1513190075.664941.mov_road.mp4
+INFO:logger:0020/3198 is done
+INFO:logger:m061_1513190565.613597.mov_road.mp4
+INFO:logger:m061_1513192533.333454.mov_road.mp4
+INFO:logger:m061_1513193428.040234.mov_road.mp4
+INFO:logger:m061_1513191877.5603.mov_road.mp4
+INFO:logger:m061_1513193327.392737.mov_road.mp4
+INFO:logger:m061_1513190157.328734.mov_road.mp4
+INFO:logger:m061_1513192361.045084.mov_road.mp4
+INFO:logger:m061_1513192648.618594.mov_road.mp4
+INFO:logger:m061_1513192610.975702.mov_road.mp4
+INFO:logger:m061_1513191587.00005.mov_road.mp4
+INFO:logger:0030/3198 is done
+INFO:logger:m061_1513190382.286608.mov_road.mp4
+INFO:logger:m061_1513190928.246065.mov_road.mp4
+INFO:logger:m061_1513192917.546616.mov_road.mp4
+INFO:logger:m061_1513190489.945452.mov_road.mp4
+INFO:logger:m061_1513190877.617525.mov_road.mp4
+INFO:logger:m061_1513192266.400613.mov_road.mp4
+INFO:logger:m061_1513191033.88374.mov_road.mp4
+INFO:logger:m061_1513189891.407062.mov_road.mp4
+INFO:logger:m061_1513191204.161622.mov_road.mp4
+INFO:logger:m061_1513191535.359826.mov_road.mp4
+INFO:logger:0040/3198 is done
+INFO:logger:m061_1513192968.190184.mov_road.mp4
+INFO:logger:m061_1513192727.264178.mov_road.mp4
+INFO:logger:m061_1513191762.9126499.mov_road.mp4
+INFO:logger:m061_1513189705.193485.mov_road.mp4
+INFO:logger:m061_1513193190.111674.mov_road.mp4
+INFO:logger:m061_1513189646.60473.mov_road.mp4
+INFO:logger:m061_1513190672.288107.mov_road.mp4
+INFO:logger:m061_1513190269.631851.mov_road.mp4
+INFO:logger:m061_1513190234.974094.mov_road.mp4
+INFO:logger:m080_1524764671.3806107.mov_road.mp4
+INFO:logger:0050/3198 is done
+INFO:logger:m080_1524764889.440991.mov_road.mp4
+INFO:logger:m080_1524762308.291672.mov_road.mp4
+INFO:logger:m080_1524764817.213721.mov_road.mp4
+INFO:logger:m080_1524764442.539001.mov_road.mp4
+INFO:logger:m080_1524765002.670315.mov_road.mp4
+INFO:logger:m080_1524762048.374569.mov_road.mp4
+INFO:logger:m080_1524764172.691824.mov_road.mp4
+INFO:logger:m080_1524763585.7929258.mov_road.mp4
+INFO:logger:m080_1524764135.071758.mov_road.mp4
+INFO:logger:m080_1524761692.842798.mov_road.mp4
+INFO:logger:0060/3198 is done
+INFO:logger:m080_1524762878.304811.mov_road.mp4
+INFO:logger:m080_1524762794.089243.mov_road.mp4
+INFO:logger:m080_1524763703.011911.mov_road.mp4
+INFO:logger:m080_1524762502.238718.mov_road.mp4
+INFO:logger:m080_1524764753.602763.mov_road.mp4
+INFO:logger:m080_1524764383.924255.mov_road.mp4
+INFO:logger:m080_1524763979.83705.mov_road.mp4
+INFO:logger:m080_1524761617.210329.mov_road.mp4
+INFO:logger:m080_1524764558.150978.mov_road.mp4
+INFO:logger:m080_1524763788.623794.mov_road.mp4
+INFO:logger:0070/3198 is done
+INFO:logger:m080_1524763207.73887.mov_road.mp4
+INFO:logger:m080_1524761513.622567.mov_road.mp4
+INFO:logger:m080_1524762394.9322157.mov_road.mp4
+INFO:logger:m080_1524762142.011307.mov_road.mp4
+INFO:logger:m080_1524761762.477692.mov_road.mp4
+INFO:logger:m080_1524762950.907784.mov_road.mp4
+INFO:logger:m080_1524764848.828679.mov_road.mp4
+INFO:logger:m080_1524764083.451258.mov_road.mp4
+INFO:logger:m080_1524762677.485139.mov_road.mp4
+INFO:logger:m080_1524763307.350917.mov_road.mp4
+INFO:logger:0080/3198 is done
+INFO:logger:m080_1524762587.880618.mov_road.mp4
+INFO:logger:m080_1524763087.1268077.mov_road.mp4
+INFO:logger:m080_1524761823.1099951.mov_road.mp4
+INFO:logger:m080_1524762201.65092.mov_road.mp4
+INFO:logger:m080_1524764710.991477.mov_road.mp4
+INFO:logger:m080_1524763439.575676.mov_road.mp4
+INFO:logger:m080_1524763878.229312.mov_road.mp4
+INFO:logger:m080_1524763522.183084.mov_road.mp4
+INFO:logger:m080_1524764591.766911.mov_road.mp4
+INFO:logger:m080_1524762985.519838.mov_road.mp4
+INFO:logger:0090/3198 is done
+INFO:logger:m080_1524762453.581439.mov_road.mp4
+INFO:logger:m080_1524763631.3984272.mov_road.mp4
+INFO:logger:m080_1524763383.962112.mov_road.mp4
+INFO:logger:m080_1524764964.053429.mov_road.mp4
+INFO:logger:m080_1524762840.698195.mov_road.mp4
+INFO:logger:m080_1524761928.74661.mov_road.mp4
+INFO:logger:m080_1524764278.311109.mov_road.mp4
+INFO:logger:m036_1503682564.159947.mov_road.mp4
+INFO:logger:m036_1503682019.755141.mov_road.mp4
+INFO:logger:m036_1503680943.25874.mov_road.mp4
+INFO:logger:0100/3198 is done
+INFO:logger:m036_1503679498.464504.mov_road.mp4
+INFO:logger:m036_1503681685.5851557.mov_road.mp4
+INFO:logger:m036_1503682285.261047.mov_road.mp4
+INFO:logger:m036_1503678714.127935.mov_road.mp4
+INFO:logger:m036_1503680247.886687.mov_road.mp4
+INFO:logger:m036_1503681975.12027.mov_road.mp4
+INFO:logger:m036_1503680782.331688.mov_road.mp4
+INFO:logger:m036_1503679297.519079.mov_road.mp4
+INFO:logger:m036_1503680877.615631.mov_road.mp4
+INFO:logger:m036_1503681034.898507.mov_road.mp4
+INFO:logger:0110/3198 is done
+INFO:logger:m036_1503680344.519832.mov_road.mp4
+INFO:logger:m036_1503679110.231873.mov_road.mp4
+INFO:logger:m036_1503679855.709117.mov_road.mp4
+INFO:logger:m036_1503681859.485434.mov_road.mp4
+INFO:logger:m036_1503681171.155934.mov_road.mp4
+INFO:logger:m036_1503682659.790377.mov_road.mp4
+INFO:logger:m036_1503680658.061516.mov_road.mp4
+INFO:logger:m036_1503680459.154934.mov_road.mp4
+INFO:logger:m036_1503680174.248124.mov_road.mp4
+INFO:logger:m036_1503681742.2232027.mov_road.mp4
+INFO:logger:0120/3198 is done
+INFO:logger:m036_1503681094.529586.mov_road.mp4
+INFO:logger:m036_1503682517.523751.mov_road.mp4
+INFO:logger:m036_1503681587.950863.mov_road.mp4
+INFO:logger:m036_1503680604.431233.mov_road.mp4
+INFO:logger:m036_1503679181.879856.mov_road.mp4
+INFO:logger:m036_1503678815.732203.mov_road.mp4
+INFO:logger:m036_1503680704.696088.mov_road.mp4
+INFO:logger:m036_1503681493.316389.mov_road.mp4
+INFO:logger:m036_1503681815.8585038.mov_road.mp4
+INFO:logger:m036_1503680510.793208.mov_road.mp4
+INFO:logger:0130/3198 is done
+INFO:logger:m036_1503680822.977671.mov_road.mp4
+INFO:logger:m036_1503679638.77183.mov_road.mp4
+INFO:logger:m036_1503679748.439168.mov_road.mp4
+INFO:logger:m036_1503679009.59417.mov_road.mp4
+INFO:logger:m036_1503679813.070545.mov_road.mp4
+INFO:logger:m036_1503681402.688625.mov_road.mp4
+INFO:logger:m036_1503682178.640535.mov_road.mp4
+INFO:logger:m036_1503681266.786239.mov_road.mp4
+INFO:logger:m036_1503679345.171475.mov_road.mp4
+INFO:logger:m036_1503682061.386788.mov_road.mp4
+INFO:logger:0140/3198 is done
+INFO:logger:m036_1503682864.062316.mov_road.mp4
+INFO:logger:m036_1503680056.6109602.mov_road.mp4
+INFO:logger:m036_1503682395.892119.mov_road.mp4
+INFO:logger:m036_1503678970.962177.mov_road.mp4
+INFO:logger:m036_1503678890.34247.mov_road.mp4
+INFO:logger:m036_1503679386.819012.mov_road.mp4
+INFO:logger:m036_1503679546.1188512.mov_road.mp4
+INFO:logger:m036_1503682745.424231.mov_road.mp4
+INFO:logger:m036_1503682147.019189.mov_road.mp4
+INFO:logger:m036_1503679902.342436.mov_road.mp4
+INFO:logger:0150/3198 is done
+INFO:logger:m036_1503681319.421255.mov_road.mp4
+INFO:logger:m036_1503681366.053237.mov_road.mp4
+INFO:logger:m036_1503680023.981648.mov_road.mp4
+INFO:logger:m042_1510856923.026264.mov_road.mp4
+INFO:logger:m042_1510856777.202109.mov_road.mp4
+INFO:logger:m042_1510857984.378005.mov_road.mp4
+INFO:logger:m042_1510858554.349402.mov_road.mp4
+INFO:logger:m042_1510858252.266114.mov_road.mp4
+INFO:logger:m042_1510859001.448937.mov_road.mp4
+INFO:logger:m042_1510858906.832556.mov_road.mp4
+INFO:logger:0160/3198 is done
+INFO:logger:m042_1510858098.045126.mov_road.mp4
+INFO:logger:m042_1510858858.213656.mov_road.mp4
+INFO:logger:m042_1510856814.7940228.mov_road.mp4
+INFO:logger:m042_1510859198.302096.mov_road.mp4
+INFO:logger:m042_1510860157.696388.mov_road.mp4
+INFO:logger:m042_1510859464.151968.mov_road.mp4
+INFO:logger:m042_1510857665.253147.mov_road.mp4
+INFO:logger:m042_1510857299.593352.mov_road.mp4
+INFO:logger:m042_1510857736.918409.mov_road.mp4
+INFO:logger:m042_1510859359.535528.mov_road.mp4
+INFO:logger:0170/3198 is done
+INFO:logger:m042_1510857816.538923.mov_road.mp4
+INFO:logger:m042_1510859817.243881.mov_road.mp4
+INFO:logger:m042_1510859644.386502.mov_road.mp4
+INFO:logger:m042_1510858402.500616.mov_road.mp4
+INFO:logger:m042_1510856600.431488.mov_road.mp4
+INFO:logger:m042_1510859738.6240478.mov_road.mp4
+INFO:logger:m042_1510859691.007016.mov_road.mp4
+INFO:logger:m042_1510859054.072154.mov_road.mp4
+INFO:logger:m042_1510856668.023593.mov_road.mp4
+INFO:logger:m042_1510858453.117787.mov_road.mp4
+INFO:logger:0180/3198 is done
+INFO:logger:m042_1510859531.768303.mov_road.mp4
+INFO:logger:m042_1510857497.936226.mov_road.mp4
+INFO:logger:m042_1510858042.428263.mov_road.mp4
+INFO:logger:m042_1510857005.663729.mov_road.mp4
+INFO:logger:m042_1510857094.292569.mov_road.mp4
+INFO:logger:m042_1510859107.686036.mov_road.mp4
+INFO:logger:m042_1510857934.763753.mov_road.mp4
+INFO:logger:m042_1510858153.658783.mov_road.mp4
+INFO:logger:m042_1510858740.592091.mov_road.mp4
+INFO:logger:m042_1510858361.884054.mov_road.mp4
+INFO:logger:0190/3198 is done
+INFO:logger:m042_1510857413.280834.mov_road.mp4
+INFO:logger:m042_1510856887.386185.mov_road.mp4
+INFO:logger:m042_1510859932.856632.mov_road.mp4
+INFO:logger:m042_1510858667.96682.mov_road.mp4
+INFO:logger:m042_1510860089.088372.mov_road.mp4
+INFO:logger:m042_1510857617.59502.mov_road.mp4
+INFO:logger:m042_1510857181.941252.mov_road.mp4
+INFO:logger:m042_1510859973.474462.mov_road.mp4
+INFO:logger:m042_1510858509.732717.mov_road.mp4
+INFO:logger:m042_1510857874.153198.mov_road.mp4
+INFO:logger:0200/3198 is done
+INFO:logger:m042_1510856731.608152.mov_road.mp4
+INFO:logger:m042_1510859282.918562.mov_road.mp4
+INFO:logger:m079_1524678483.5820417.mov_road.mp4
+INFO:logger:m079_1524675590.063526.mov_road.mp4
+INFO:logger:m079_1524677594.98816.mov_road.mp4
+INFO:logger:m079_1524675774.288143.mov_road.mp4
+INFO:logger:m079_1524675667.668863.mov_road.mp4
+INFO:logger:m079_1524678337.380117.mov_road.mp4
+INFO:logger:m079_1524677059.778028.mov_road.mp4
+INFO:logger:m079_1524675953.502481.mov_road.mp4
+INFO:logger:0210/3198 is done
+INFO:logger:m079_1524676499.585108.mov_road.mp4
+INFO:logger:m079_1524676131.325975.mov_road.mp4
+INFO:logger:m079_1524678439.978265.mov_road.mp4
+INFO:logger:m079_1524675556.475164.mov_road.mp4
+INFO:logger:m079_1524677402.778346.mov_road.mp4
+INFO:logger:m079_1524676242.52712.mov_road.mp4
+INFO:logger:m079_1524677519.3841903.mov_road.mp4
+INFO:logger:m079_1524676795.391859.mov_road.mp4
+INFO:logger:m079_1524678637.787694.mov_road.mp4
+INFO:logger:m079_1524676915.582864.mov_road.mp4
+INFO:logger:0220/3198 is done
+INFO:logger:m079_1524676686.798392.mov_road.mp4
+INFO:logger:m079_1524677968.979129.mov_road.mp4
+INFO:logger:m079_1524677336.174407.mov_road.mp4
+INFO:logger:m079_1524676168.931189.mov_road.mp4
+INFO:logger:m079_1524677172.97704.mov_road.mp4
+INFO:logger:m079_1524676282.136679.mov_road.mp4
+INFO:logger:m079_1524678086.576862.mov_road.mp4
+INFO:logger:m079_1524677281.575841.mov_road.mp4
+INFO:logger:m079_1524676366.36524.mov_road.mp4
+INFO:logger:m079_1524677714.195214.mov_road.mp4
+INFO:logger:0230/3198 is done
+INFO:logger:m079_1524676326.750177.mov_road.mp4
+INFO:logger:m079_1524677867.384731.mov_road.mp4
+INFO:logger:m079_1524678151.180038.mov_road.mp4
+INFO:logger:m079_1524678225.780601.mov_road.mp4
+INFO:logger:m079_1524677648.591847.mov_road.mp4
+INFO:logger:m079_1524676880.985829.mov_road.mp4
+INFO:logger:m079_1524678567.1849287.mov_road.mp4
+INFO:logger:m079_1524677829.792068.mov_road.mp4
+INFO:logger:m079_1524677119.375217.mov_road.mp4
+INFO:logger:m079_1524675393.302139.mov_road.mp4
+INFO:logger:0240/3198 is done
+INFO:logger:m079_1524675498.888248.mov_road.mp4
+INFO:logger:m079_1524676621.204986.mov_road.mp4
+INFO:logger:m079_1524676463.975477.mov_road.mp4
+INFO:logger:m079_1524676011.104186.mov_road.mp4
+INFO:logger:m079_1524675861.8972049.mov_road.mp4
+INFO:logger:m079_1524676072.712181.mov_road.mp4
+INFO:logger:m079_1524676977.183537.mov_road.mp4
+INFO:logger:m047_1511982599.759323.mov_road.mp4
+INFO:logger:m047_1511981158.340441.mov_road.mp4
+INFO:logger:m047_1511981468.915161.mov_road.mp4
+INFO:logger:0250/3198 is done
+INFO:logger:m047_1511983173.074009.mov_road.mp4
+INFO:logger:m047_1511982178.689649.mov_road.mp4
+INFO:logger:m047_1511982702.372224.mov_road.mp4
+INFO:logger:m047_1511983659.228443.mov_road.mp4
+INFO:logger:m047_1511983450.771286.mov_road.mp4
+INFO:logger:m047_1511981890.199803.mov_road.mp4
+INFO:logger:m047_1511981095.72812.mov_road.mp4
+INFO:logger:m047_1511981967.86407.mov_road.mp4
+INFO:logger:m047_1511981715.883391.mov_road.mp4
+INFO:logger:m047_1511983126.461982.mov_road.mp4
+INFO:logger:0260/3198 is done
+INFO:logger:m047_1511983329.9225442.mov_road.mp4
+INFO:logger:m047_1511984010.31373.mov_road.mp4
+INFO:logger:m047_1511981675.230148.mov_road.mp4
+INFO:logger:m047_1511983843.467906.mov_road.mp4
+INFO:logger:m047_1511982884.606878.mov_road.mp4
+INFO:logger:m047_1511983265.305791.mov_road.mp4
+INFO:logger:m047_1511984258.154221.mov_road.mp4
+INFO:logger:m047_1511982819.991113.mov_road.mp4
+INFO:logger:m047_1511981355.255363.mov_road.mp4
+INFO:logger:m047_1511984168.540546.mov_road.mp4
+INFO:logger:0270/3198 is done
+INFO:logger:m047_1511982056.473652.mov_road.mp4
+INFO:logger:m047_1511983965.698285.mov_road.mp4
+INFO:logger:m047_1511983553.618676.mov_road.mp4
+INFO:logger:m047_1511982270.30348.mov_road.mp4
+INFO:logger:m047_1511984068.927701.mov_road.mp4
+INFO:logger:m047_1511983482.386713.mov_road.mp4
+INFO:logger:m047_1511981589.576153.mov_road.mp4
+INFO:logger:m047_1511982391.532925.mov_road.mp4
+INFO:logger:m047_1511983520.003119.mov_road.mp4
+INFO:logger:m047_1511980932.507251.mov_road.mp4
+INFO:logger:0280/3198 is done
+INFO:logger:m047_1511981245.610886.mov_road.mp4
+INFO:logger:m047_1511983364.539197.mov_road.mp4
+INFO:logger:m047_1511983048.849949.mov_road.mp4
+INFO:logger:m047_1511984318.757007.mov_road.mp4
+INFO:logger:m047_1511981190.965401.mov_road.mp4
+INFO:logger:m047_1511982112.08314.mov_road.mp4
+INFO:logger:m047_1511982303.919702.mov_road.mp4
+INFO:logger:m047_1511981793.547907.mov_road.mp4
+INFO:logger:m047_1511983778.845796.mov_road.mp4
+INFO:logger:m047_1511983878.085182.mov_road.mp4
+INFO:logger:0290/3198 is done
+INFO:logger:m047_1511983226.688724.mov_road.mp4
+INFO:logger:m047_1511981040.094955.mov_road.mp4
+INFO:logger:m047_1511983001.229153.mov_road.mp4
+INFO:logger:m047_1511983408.1535.mov_road.mp4
+INFO:logger:m047_1511982497.144852.mov_road.mp4
+INFO:logger:m093_1527277861.903002.mov_road.mp4
+INFO:logger:m093_1527278996.50374.mov_road.mp4
+INFO:logger:m093_1527279309.325375.mov_road.mp4
+INFO:logger:m093_1527279811.604039.mov_road.mp4
+INFO:logger:m093_1527281502.444037.mov_road.mp4
+INFO:logger:0300/3198 is done
+INFO:logger:m093_1527280711.281125.mov_road.mp4
+INFO:logger:m093_1527278884.285883.mov_road.mp4
+INFO:logger:m093_1527280871.505607.mov_road.mp4
+INFO:logger:m093_1527281786.292132.mov_road.mp4
+INFO:logger:m093_1527280239.639151.mov_road.mp4
+INFO:logger:m093_1527280620.675667.mov_road.mp4
+INFO:logger:m093_1527278497.328247.mov_road.mp4
+INFO:logger:m093_1527281388.207518.mov_road.mp4
+INFO:logger:m093_1527277904.508214.mov_road.mp4
+INFO:logger:m093_1527280120.031721.mov_road.mp4
+INFO:logger:0310/3198 is done
+INFO:logger:m093_1527280501.072172.mov_road.mp4
+INFO:logger:m093_1527280063.4230893.mov_road.mp4
+INFO:logger:m093_1527278824.670134.mov_road.mp4
+INFO:logger:m093_1527279477.156723.mov_road.mp4
+INFO:logger:m093_1527278376.672855.mov_road.mp4
+INFO:logger:m093_1527282114.143099.mov_road.mp4
+INFO:logger:m093_1527280404.854576.mov_road.mp4
+INFO:logger:m093_1527281151.364817.mov_road.mp4
+INFO:logger:m093_1527279361.943307.mov_road.mp4
+INFO:logger:m093_1527277975.141609.mov_road.mp4
+INFO:logger:0320/3198 is done
+INFO:logger:m093_1527281215.981683.mov_road.mp4
+INFO:logger:m093_1527278293.01939.mov_road.mp4
+INFO:logger:m093_1527281904.911218.mov_road.mp4
+INFO:logger:m093_1527278175.389568.mov_road.mp4
+INFO:logger:m093_1527277805.307305.mov_road.mp4
+INFO:logger:m093_1527279629.375207.mov_road.mp4
+INFO:logger:m093_1527281054.737922.mov_road.mp4
+INFO:logger:m093_1527279905.208013.mov_road.mp4
+INFO:logger:m093_1527279199.719148.mov_road.mp4
+INFO:logger:m093_1527278555.990813.mov_road.mp4
+INFO:logger:0330/3198 is done
+INFO:logger:m093_1527279718.9943707.mov_road.mp4
+INFO:logger:m093_1527278721.988097.mov_road.mp4
+INFO:logger:m093_1527280812.889284.mov_road.mp4
+INFO:logger:m093_1527281700.678644.mov_road.mp4
+INFO:logger:m093_1527278090.768832.mov_road.mp4
+INFO:logger:m093_1527279558.766852.mov_road.mp4
+INFO:logger:m093_1527280294.243414.mov_road.mp4
+INFO:logger:m093_1527279399.54898.mov_road.mp4
+INFO:logger:m093_1527279996.809474.mov_road.mp4
+INFO:logger:m093_1527280460.463447.mov_road.mp4
+INFO:logger:0340/3198 is done
+INFO:logger:m093_1527278686.321752.mov_road.mp4
+INFO:logger:m093_1527278600.647236.mov_road.mp4
+INFO:logger:m093_1527281995.525487.mov_road.mp4
+INFO:logger:m093_1527280965.129041.mov_road.mp4
+INFO:logger:m093_1527281442.826102.mov_road.mp4
+INFO:logger:m093_1527281308.596895.mov_road.mp4
+INFO:logger:m093_1527281623.058133.mov_road.mp4
+INFO:logger:m093_1527279115.114059.mov_road.mp4
+INFO:logger:m093_1527278919.894912.mov_road.mp4
+INFO:logger:m040_1510347764.030725.mov_road.mp4
+INFO:logger:0350/3198 is done
+INFO:logger:m040_1510346922.3061.mov_road.mp4
+INFO:logger:m040_1510345681.816776.mov_road.mp4
+INFO:logger:m040_1510347610.800507.mov_road.mp4
+INFO:logger:m040_1510348026.49508.mov_road.mp4
+INFO:logger:m040_1510348279.558033.mov_road.mp4
+INFO:logger:m040_1510348931.470083.mov_road.mp4
+INFO:logger:m040_1510348368.173102.mov_road.mp4
+INFO:logger:m040_1510346244.499751.mov_road.mp4
+INFO:logger:m040_1510347436.565388.mov_road.mp4
+INFO:logger:m040_1510347138.12565.mov_road.mp4
+INFO:logger:0360/3198 is done
+INFO:logger:m040_1510346364.141285.mov_road.mp4
+INFO:logger:m040_1510346479.429136.mov_road.mp4
+INFO:logger:m040_1510346402.785352.mov_road.mp4
+INFO:logger:m040_1510348071.107798.mov_road.mp4
+INFO:logger:m040_1510345785.406779.mov_road.mp4
+INFO:logger:m040_1510345959.58626.mov_road.mp4
+INFO:logger:m040_1510348562.024387.mov_road.mp4
+INFO:logger:m040_1510347361.954494.mov_road.mp4
+INFO:logger:m040_1510349027.0826323.mov_road.mp4
+INFO:logger:m040_1510345865.993282.mov_road.mp4
+INFO:logger:0370/3198 is done
+INFO:logger:m040_1510347521.182098.mov_road.mp4
+INFO:logger:m040_1510346539.078547.mov_road.mp4
+INFO:logger:m040_1510348528.404433.mov_road.mp4
+INFO:logger:m040_1510346172.8536682.mov_road.mp4
+INFO:logger:m040_1510347239.735891.mov_road.mp4
+INFO:logger:m040_1510348682.632601.mov_road.mp4
+INFO:logger:m040_1510348189.327882.mov_road.mp4
+INFO:logger:m040_1510346080.207502.mov_road.mp4
+INFO:logger:m040_1510346967.916996.mov_road.mp4
+INFO:logger:m040_1510347276.344839.mov_road.mp4
+INFO:logger:0380/3198 is done
+INFO:logger:m040_1510347804.642846.mov_road.mp4
+INFO:logger:m040_1510348758.24606.mov_road.mp4
+INFO:logger:m040_1510348126.717957.mov_road.mp4
+INFO:logger:m040_1510346676.384253.mov_road.mp4
+INFO:logger:m040_1510348245.94481.mov_road.mp4
+INFO:logger:m040_1510347056.523118.mov_road.mp4
+INFO:logger:m040_1510347973.87778.mov_road.mp4
+INFO:logger:m040_1510347698.41894.mov_road.mp4
+INFO:logger:m040_1510345577.222987.mov_road.mp4
+INFO:logger:m040_1510348819.857809.mov_road.mp4
+INFO:logger:0390/3198 is done
+INFO:logger:m040_1510346853.688977.mov_road.mp4
+INFO:logger:m040_1510347895.261036.mov_road.mp4
+INFO:logger:m040_1510348469.784623.mov_road.mp4
+INFO:logger:m040_1510346636.725989.mov_road.mp4
+INFO:logger:m040_1510346771.035269.mov_road.mp4
+INFO:logger:m028_1502471657.075987.mov_road.mp4
+INFO:logger:m028_1502471812.304794.mov_road.mp4
+INFO:logger:m028_1502473294.531226.mov_road.mp4
+INFO:logger:m028_1502470892.253317.mov_road.mp4
+INFO:logger:m028_1502471351.010602.mov_road.mp4
+INFO:logger:0400/3198 is done
+INFO:logger:m028_1502472462.824565.mov_road.mp4
+INFO:logger:m028_1502470719.033245.mov_road.mp4
+INFO:logger:m028_1502471958.5214.mov_road.mp4
+INFO:logger:m028_1502470836.636727.mov_road.mp4
+INFO:logger:m028_1502472957.092434.mov_road.mp4
+INFO:logger:m028_1502473548.35638.mov_road.mp4
+INFO:logger:m028_1502471520.857579.mov_road.mp4
+INFO:logger:m028_1502472697.652993.mov_road.mp4
+INFO:logger:m028_1502470609.214734.mov_road.mp4
+INFO:logger:m028_1502471480.244859.mov_road.mp4
+INFO:logger:0410/3198 is done
+INFO:logger:m028_1502471208.733459.mov_road.mp4
+INFO:logger:m028_1502472502.434662.mov_road.mp4
+INFO:logger:m028_1502471291.38951.mov_road.mp4
+INFO:logger:m028_1502471045.495412.mov_road.mp4
+INFO:logger:m028_1502472425.214654.mov_road.mp4
+INFO:logger:m028_1502473732.572434.mov_road.mp4
+INFO:logger:m028_1502472092.744787.mov_road.mp4
+INFO:logger:m028_1502472341.599093.mov_road.mp4
+INFO:logger:m028_1502472909.480168.mov_road.mp4
+INFO:logger:m028_1502473205.919595.mov_road.mp4
+INFO:logger:0420/3198 is done
+INFO:logger:m028_1502471109.120435.mov_road.mp4
+INFO:logger:m028_1502472155.378724.mov_road.mp4
+INFO:logger:m028_1502473029.700625.mov_road.mp4
+INFO:logger:m028_1502472246.991576.mov_road.mp4
+INFO:logger:m028_1502473626.958334.mov_road.mp4
+INFO:logger:m028_1502473462.751234.mov_road.mp4
+INFO:logger:m028_1502471723.681688.mov_road.mp4
+INFO:logger:m028_1502473138.309701.mov_road.mp4
+INFO:logger:m028_1502470518.62344.mov_road.mp4
+INFO:logger:m028_1502471922.90919.mov_road.mp4
+INFO:logger:0430/3198 is done
+INFO:logger:m028_1502472764.264908.mov_road.mp4
+INFO:logger:m028_1502470643.814441.mov_road.mp4
+INFO:logger:m028_1502472811.870659.mov_road.mp4
+INFO:logger:m028_1502471564.465122.mov_road.mp4
+INFO:logger:m028_1502472611.046499.mov_road.mp4
+INFO:logger:m028_1502470683.429777.mov_road.mp4
+INFO:logger:m028_1502472054.130105.mov_road.mp4
+INFO:logger:m028_1502473362.135303.mov_road.mp4
+INFO:logger:m028_1502470945.882422.mov_road.mp4
+INFO:logger:m028_1502471401.629796.mov_road.mp4
+INFO:logger:0440/3198 is done
+INFO:logger:m034_1503506438.903826.mov_road.mp4
+INFO:logger:m034_1503509443.2459593.mov_road.mp4
+INFO:logger:m034_1503507692.6583333.mov_road.mp4
+INFO:logger:m034_1503508785.220883.mov_road.mp4
+INFO:logger:m034_1503508180.796771.mov_road.mp4
+INFO:logger:m034_1503508355.058506.mov_road.mp4
+INFO:logger:m034_1503508949.481441.mov_road.mp4
+INFO:logger:m034_1503505942.423008.mov_road.mp4
+INFO:logger:m034_1503506356.2650113.mov_road.mp4
+INFO:logger:m034_1503506158.674662.mov_road.mp4
+INFO:logger:0450/3198 is done
+INFO:logger:m034_1503507528.41136.mov_road.mp4
+INFO:logger:m034_1503507924.906803.mov_road.mp4
+INFO:logger:m034_1503509371.616812.mov_road.mp4
+INFO:logger:m034_1503506190.3147311.mov_road.mp4
+INFO:logger:m034_1503509117.733872.mov_road.mp4
+INFO:logger:m034_1503507609.035808.mov_road.mp4
+INFO:logger:m034_1503506800.794218.mov_road.mp4
+INFO:logger:m034_1503508037.536317.mov_road.mp4
+INFO:logger:m034_1503506653.514215.mov_road.mp4
+INFO:logger:m034_1503509513.902383.mov_road.mp4
+INFO:logger:0460/3198 is done
+INFO:logger:m034_1503508242.428271.mov_road.mp4
+INFO:logger:m034_1503508467.6967459.mov_road.mp4
+INFO:logger:m034_1503509160.36715.mov_road.mp4
+INFO:logger:m034_1503507809.286973.mov_road.mp4
+INFO:logger:m034_1503506960.042312.mov_road.mp4
+INFO:logger:m034_1503506290.619009.mov_road.mp4
+INFO:logger:m034_1503507440.787821.mov_road.mp4
+INFO:logger:m034_1503506052.0333533.mov_road.mp4
+INFO:logger:m034_1503508112.166153.mov_road.mp4
+INFO:logger:m034_1503507108.300845.mov_road.mp4
+INFO:logger:0470/3198 is done
+INFO:logger:m034_1503506482.564806.mov_road.mp4
+INFO:logger:m034_1503508620.975565.mov_road.mp4
+INFO:logger:m034_1503506701.155836.mov_road.mp4
+INFO:logger:m034_1503508840.851007.mov_road.mp4
+INFO:logger:m034_1503506258.970554.mov_road.mp4
+INFO:logger:m034_1503507054.669992.mov_road.mp4
+INFO:logger:m034_1503506552.221262.mov_road.mp4
+INFO:logger:m034_1503506612.859308.mov_road.mp4
+INFO:logger:m034_1503508701.597313.mov_road.mp4
+INFO:logger:m034_1503507281.545474.mov_road.mp4
+INFO:logger:0480/3198 is done
+INFO:logger:m034_1503507389.1664.mov_road.mp4
+INFO:logger:m034_1503508521.337469.mov_road.mp4
+INFO:logger:m034_1503505848.8253853.mov_road.mp4
+INFO:logger:m034_1503507168.923159.mov_road.mp4
+INFO:logger:Namespace(data_aug='v1', data_dir='', data_list='video.txt', dtype='float32', fast_temporal_stride=2, gpu_id=2, hashtag='', input_size=224, log_interval=10, mode=None, model='i3d_resnet50_v1_kinetics400', need_root=False, new_height=256, new_length=64, new_step=1, new_width=340, num_classes=400, num_crop=1, num_segments=10, resume_params='', save_dir='/home/tongwu/INAGT2/INAGT2/data/i3d_features_new', slow_temporal_stride=16, slowfast=False, ten_crop=False, three_crop=False, use_decord=True, use_pretrained=True, video_loader=True)
+INFO:logger:m034_1503506892.417824.mov_road.mp4
+INFO:logger:m034_1503509066.110425.mov_road.mp4
+INFO:logger:Pre-trained model is successfully loaded from the model zoo.
+INFO:logger:Successfully built model i3d_resnet50_v1_kinetics400
+INFO:logger:Load 3198 video samples.
+INFO:logger:m034_1503509259.991553.mov_road.mp4
+[21:51:15] src/operator/nn/./cudnn/./cudnn_algoreg-inl.h:97: Running performance tests to find the best convolution algorithm, this can take a while... (set the environment variable MXNET_CUDNN_AUTOTUNE_DEFAULT to 0 to disable)
+INFO:logger:m087_1525973922.700296.mov_road.mp4
+INFO:logger:m087_1525971811.612438.mov_road.mp4
+INFO:logger:m087_1525972338.173977.mov_road.mp4
+INFO:logger:0490/3198 is done
+INFO:logger:m087_1525974692.820585.mov_road.mp4
+INFO:logger:m087_1525974789.04412.mov_road.mp4
+INFO:logger:m087_1525971620.396517.mov_road.mp4
+INFO:logger:m087_1525972017.5420597.mov_road.mp4
+INFO:logger:m087_1525973785.480426.mov_road.mp4
+INFO:logger:m087_1525972905.908965.mov_road.mp4
+INFO:logger:m087_1525972572.464681.mov_road.mp4
+INFO:logger:m087_1525974484.980896.mov_road.mp4
+INFO:logger:m087_1525973752.868678.mov_road.mp4
+INFO:logger:m087_1525973028.128188.mov_road.mp4
+INFO:logger:0500/3198 is done
+INFO:logger:m087_1525974210.147143.mov_road.mp4
+INFO:logger:m087_1525974634.209686.mov_road.mp4
+INFO:logger:m087_1525974269.763942.mov_road.mp4
+INFO:logger:m087_1525971923.895984.mov_road.mp4
+INFO:logger:m087_1525973428.806856.mov_road.mp4
+INFO:logger:m087_1525973232.975065.mov_road.mp4
+INFO:logger:m087_1525974037.92787.mov_road.mp4
+INFO:logger:m087_1525973516.422202.mov_road.mp4
+INFO:logger:m087_1525973079.746505.mov_road.mp4
+INFO:logger:m087_1525973550.0317109.mov_road.mp4
+INFO:logger:0510/3198 is done
+INFO:logger:m087_1525972943.518961.mov_road.mp4
+INFO:logger:m087_1525974110.53631.mov_road.mp4
+INFO:logger:m087_1525972078.189075.mov_road.mp4
+INFO:logger:m087_1525972861.293968.mov_road.mp4
+INFO:logger:m087_1525971878.255012.mov_road.mp4
+INFO:logger:m087_1525973287.584318.mov_road.mp4
+INFO:logger:m087_1525973641.254172.mov_road.mp4
+INFO:logger:m087_1525973590.640027.mov_road.mp4
+INFO:logger:m087_1525973197.359898.mov_road.mp4
+INFO:logger:m087_1525973388.196495.mov_road.mp4
+INFO:logger:0520/3198 is done
+INFO:logger:m087_1525971527.806442.mov_road.mp4
+INFO:logger:m087_1525971725.985655.mov_road.mp4
+INFO:logger:m087_1525972267.506645.mov_road.mp4
+INFO:logger:m087_1525973958.3161.mov_road.mp4
+INFO:logger:m087_1525974901.653923.mov_road.mp4
+INFO:logger:m087_1525974754.429349.mov_road.mp4
+INFO:logger:m087_1525972659.074813.mov_road.mp4
+INFO:logger:m087_1525972762.6838493.mov_road.mp4
+INFO:logger:m087_1525974377.3769312.mov_road.mp4
+INFO:logger:m087_1525972188.839321.mov_road.mp4
+INFO:logger:0530/3198 is done
+INFO:logger:m087_1525974572.591735.mov_road.mp4
+INFO:logger:m087_1525972478.796133.mov_road.mp4
+INFO:logger:m087_1525972418.14125.mov_road.mp4
+INFO:logger:m087_1525973842.087216.mov_road.mp4
+INFO:logger:m098_1527884230.596366.mov_road.mp4
+INFO:logger:m098_1527885546.486582.mov_road.mp4
+INFO:logger:m098_1527887285.052054.mov_road.mp4
+INFO:logger:m098_1527882821.385903.mov_road.mp4
+INFO:logger:m098_1527882611.552639.mov_road.mp4
+INFO:logger:m098_1527882942.05578.mov_road.mp4
+INFO:logger:0540/3198 is done
+INFO:logger:m098_1527886924.324459.mov_road.mp4
+INFO:logger:m098_1527886869.701435.mov_road.mp4
+INFO:logger:m098_1527882513.966246.mov_road.mp4
