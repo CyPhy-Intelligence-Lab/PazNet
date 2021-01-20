@@ -132,11 +132,11 @@ i3d_inception_dimension = 1024
 
 input4 = Input(shape=(i3d_inception_dimension, ))
 bn41 = BatchNormalization()(input4)
-flat4 = Flatten()(bn41)
+#flat4 = Flatten()(bn41)
 
 
 # concatenate
-merge = concatenate([flat1, flat2, flat3, flat4])
+merge = concatenate([flat1, flat2, flat3, bn41])
 
 bn3 = BatchNormalization()(merge)
 hidden1 = Dense(16, activation='relu')(bn3)
