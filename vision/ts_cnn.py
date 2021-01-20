@@ -23,6 +23,8 @@ import data_preprocessing
 import keras.backend as K
 from keras import initializers
 from imblearn.over_sampling import SMOTE
+import os
+os.environ["CUDA_VISIBLE_DEVICES"]="0, 1, 2, 3"
 
 
 def get_f1(y_true, y_pred):  # taken from old keras source code
