@@ -146,8 +146,8 @@ hidden1 = Dense(16, activation='relu')(bn3)
 dropout1 = Dropout(0.5)(hidden1)
 hidden2 = Dense(8, activation='relu')(dropout1)
 dropout2 = Dropout(0.5)(hidden2)
-bn4 = BatchNormalization()(dropout2)
-output = Dense(2, activation='softmax')(bn4)
+#bn4 = BatchNormalization()(dropout2)
+output = Dense(2, activation='softmax')(dropout2)
 model = Model([input1, input2, input3, input4], output)
 model.summary()
 
@@ -158,11 +158,11 @@ if TRAIN is True:
     model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
 
     model.fit(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological],
-                 oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=2000,
+                 oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=1000,
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
                                                        op_test, i3d_test], y_test))
 
-    model.save("checkpoints/4channel_OS_"+str(learning_rate)+"_"+str(batch_size)+".h5")
+    model.save("checkpoints/4channel_OS_3bn_"+str(learning_rate)+"_"+str(batch_size)+".h5")
 
 else:
     trained_model = keras.models.load_model("checkpoints/2channel_1e-05_16.h5", custom_objects={'get_f1': get_f1})
