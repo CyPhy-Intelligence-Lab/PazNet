@@ -162,7 +162,7 @@ if TRAIN is True:
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
                                                        op_test, i3d_test], y_test))
 
-    model.save("checkpoints/4channel_OS_3bn_"+str(learning_rate)+"_"+str(batch_size)+".h5")
+    model.save("checkpoints/4channel_OS_0do_"+str(learning_rate)+"_"+str(batch_size)+".h5")
 
 else:
     trained_model = keras.models.load_model("checkpoints/2channel_1e-05_16.h5", custom_objects={'get_f1': get_f1})
