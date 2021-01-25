@@ -98,20 +98,20 @@ physiological = [6, 7, 8, 9, 10, 11, 12, 13]
 # CAN channel
 input1 = Input(shape=(60, 11, 1))
 bn11 = BatchNormalization()(input1)
-conv11 = Conv2D(32, kernel_size=3, activation='relu')(bn11)
+conv11 = Conv2D(8, kernel_size=3, activation='relu')(bn11)
 pool11 = MaxPooling2D(pool_size=(2, 2))(conv11)
 bn12 = BatchNormalization()(pool11)
-conv12 = Conv2D(32, kernel_size=3, activation='relu')(bn12)
+conv12 = Conv2D(8, kernel_size=3, activation='relu')(bn12)
 pool12 = MaxPooling2D(pool_size=(2, 2))(conv12)
 flat1 = Flatten()(pool12)
 
 # Physiological channel
 input2 = Input(shape=(60, 8, 1))
 bn21 = BatchNormalization()(input2)
-conv21 = Conv2D(32, kernel_size=3, activation='relu')(bn21)
+conv21 = Conv2D(8, kernel_size=3, activation='relu')(bn21)
 pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
 bn22 = BatchNormalization()(pool21)
-conv22 = Conv2D(32, kernel_size=2, activation='relu')(bn22)
+conv22 = Conv2D(8, kernel_size=2, activation='relu')(bn22)
 pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
 flat2 = Flatten()(pool22)
 
@@ -122,10 +122,10 @@ n_face_pose = 70 * 2
 
 input3 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
 bn31 = BatchNormalization()(input3)
-conv31 = Conv2D(64, kernel_size=3, activation='relu')(bn31)
+conv31 = Conv2D(16, kernel_size=3, activation='relu')(bn31)
 pool31 = MaxPooling2D(pool_size=(2, 2))(conv31)
 bn32 = BatchNormalization()(pool31)
-conv32 = Conv2D(32, kernel_size=3, activation='relu')(bn32)
+conv32 = Conv2D(16, kernel_size=3, activation='relu')(bn32)
 pool32 = MaxPooling2D(pool_size=(2, 2))(conv32)
 flat3 = Flatten()(pool32)
 
@@ -142,11 +142,11 @@ bn41 = BatchNormalization()(input4)
 merge = concatenate([flat1, flat2, flat3, bn41])
 
 bn3 = BatchNormalization()(merge)
-hidden1 = Dense(16, activation='relu')(bn3)
-#dropout1 = Dropout(0.5)(hidden1)
-#hidden2 = Dense(8, activation='relu')(hidden1)
-#dropout2 = Dropout(0.5)(hidden2)
-bn4 = BatchNormalization()(hidden1)
+hidden1 = Dense(8, activation='relu')(bn3)
+dropout1 = Dropout(0.5)(hidden1)
+hidden2 = Dense(4, activation='relu')(dropout1)
+dropout2 = Dropout(0.5)(hidden2)
+bn4 = BatchNormalization()(dropout2)
 output = Dense(2, activation='softmax')(bn4)
 model = Model([input1, input2, input3, input4], output)
 model.summary()
@@ -162,7 +162,7 @@ if TRAIN is True:
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
                                                        op_test, i3d_test], y_test))
 
-    model.save("checkpoints/4channel_OS_0do_1dense_"+str(learning_rate)+"_"+str(batch_size)+".h5")
+    model.save("checkpoints/4channel_OS_less_neuron_"+str(learning_rate)+"_"+str(batch_size)+".h5")
 
 else:
     trained_model = keras.models.load_model("checkpoints/2channel_1e-05_16.h5", custom_objects={'get_f1': get_f1})
