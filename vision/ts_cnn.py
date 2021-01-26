@@ -157,17 +157,19 @@ model.summary()
 TRAIN = True
 
 if TRAIN is True:
-
+    epochs = 1000
+    decay_rate = learning_rate / epochs
     model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
 
     model.fit(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological],
-                 oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=500,
+                 oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=epochs,
+              momentum=0.8, decay=decay_rate,
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
                                                        op_test, i3d_test], y_test))
 
-    model.save("checkpoints/4channel_OS_+" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
-        c21) + "_" + str(c22)
-               + "_" + str(learning_rate) + "_" + str(batch_size) + ".h5")
+    model.save("checkpoints/4channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
+        c31) + "_" + str(c32)
+               + "_" + str(learning_rate) + "_"+str(decay_rate) + "_" + str(batch_size) + ".h5")
 
 else:
     trained_model = keras.models.load_model("checkpoints/2channel_1e-05_16.h5", custom_objects={'get_f1': get_f1})
