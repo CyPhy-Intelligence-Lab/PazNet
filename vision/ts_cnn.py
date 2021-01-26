@@ -40,7 +40,7 @@ def get_f1(y_true, y_pred):  # taken from old keras source code
 
 def shuffle_train_test_split(size, ratio):
     index = np.arange(size)
-    shuffle(index)
+    shuffle(index, random_state=0)
     sep = int(size * ratio)
     return index[:sep], index[sep:]
 
