@@ -24,7 +24,8 @@ import keras.backend as K
 from keras import initializers
 from imblearn.over_sampling import SMOTE
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]="0, 1, 2, 3"
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"
 
 
 def get_f1(y_true, y_pred):  # taken from old keras source code
@@ -55,25 +56,24 @@ i3d_inception_features = np.load("../data/i3d_inceptionv1_features.npy")
 label = np.load("../data/concat_label.npy")
 
 # shuffle
-#ts_data, label = shuffle(time_series, open_pose, i3d_inception_features, label, random_state=0)
+# ts_data, label = shuffle(time_series, open_pose, i3d_inception_features, label, random_state=0)
 # train-test split
 train_index, test_index = shuffle_train_test_split(len(label), 0.8)
 ts_train, op_train, i3d_train, y_train = time_series[train_index], open_pose[train_index], \
                                          i3d_inception_features[train_index], label[train_index]
 ts_test, op_test, i3d_test, y_test = time_series[test_index], open_pose[test_index], \
-                                         i3d_inception_features[test_index], label[test_index]
-
+                                     i3d_inception_features[test_index], label[test_index]
 
 # over sampling on training set
 sm = SMOTE(random_state=0)
 ts_train = np.array(ts_train)
-ts_train = ts_train.reshape(-1, 60*19)
-op_train = op_train.reshape(-1, 60*252)
+ts_train = ts_train.reshape(-1, 60 * 19)
+op_train = op_train.reshape(-1, 60 * 252)
 X_train = np.concatenate((ts_train, op_train, i3d_train), axis=1)
 oversampled_X_train, oversampled_y_train = sm.fit_resample(X_train, np.array(y_train))
-oversampled_ts_train = oversampled_X_train[:,:60*19].reshape(-1, 60, 19)
-oversampled_op_train = oversampled_X_train[:,60*19:60*(252+19)].reshape(-1, 60, 252)
-oversampled_i3d_train = oversampled_X_train[:,60*(252+19):]
+oversampled_ts_train = oversampled_X_train[:, :60 * 19].reshape(-1, 60, 19)
+oversampled_op_train = oversampled_X_train[:, 60 * 19:60 * (252 + 19)].reshape(-1, 60, 252)
+oversampled_i3d_train = oversampled_X_train[:, 60 * (252 + 19):]
 
 oversampled_y_train = pd.get_dummies(oversampled_y_train, columns=['l1', 'l2'])
 y_test = pd.get_dummies(y_test, columns=['l1', 'l2'])
@@ -94,24 +94,27 @@ print(y_test.shape)
 
 CAN = [0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18]
 physiological = [6, 7, 8, 9, 10, 11, 12, 13]
+c11, c12 = 16, 16
+c21, c22 = 16, 16
+c31, c32 = 32, 32
 
 # CAN channel
 input1 = Input(shape=(60, 11, 1))
 bn11 = BatchNormalization()(input1)
-conv11 = Conv2D(8, kernel_size=3, activation='relu')(bn11)
+conv11 = Conv2D(c11, kernel_size=3, activation='relu')(bn11)
 pool11 = MaxPooling2D(pool_size=(2, 2))(conv11)
 bn12 = BatchNormalization()(pool11)
-conv12 = Conv2D(8, kernel_size=3, activation='relu')(bn12)
+conv12 = Conv2D(c12, kernel_size=3, activation='relu')(bn12)
 pool12 = MaxPooling2D(pool_size=(2, 2))(conv12)
 flat1 = Flatten()(pool12)
 
 # Physiological channel
 input2 = Input(shape=(60, 8, 1))
 bn21 = BatchNormalization()(input2)
-conv21 = Conv2D(8, kernel_size=3, activation='relu')(bn21)
+conv21 = Conv2D(c21, kernel_size=3, activation='relu')(bn21)
 pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
 bn22 = BatchNormalization()(pool21)
-conv22 = Conv2D(8, kernel_size=2, activation='relu')(bn22)
+conv22 = Conv2D(c22, kernel_size=2, activation='relu')(bn22)
 pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
 flat2 = Flatten()(pool22)
 
@@ -122,10 +125,10 @@ n_face_pose = 70 * 2
 
 input3 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
 bn31 = BatchNormalization()(input3)
-conv31 = Conv2D(16, kernel_size=3, activation='relu')(bn31)
+conv31 = Conv2D(c31, kernel_size=3, activation='relu')(bn31)
 pool31 = MaxPooling2D(pool_size=(2, 2))(conv31)
 bn32 = BatchNormalization()(pool31)
-conv32 = Conv2D(16, kernel_size=3, activation='relu')(bn32)
+conv32 = Conv2D(c32, kernel_size=3, activation='relu')(bn32)
 pool32 = MaxPooling2D(pool_size=(2, 2))(conv32)
 flat3 = Flatten()(pool32)
 
@@ -133,9 +136,9 @@ flat3 = Flatten()(pool32)
 i3d_resnet_dimension = 2048
 i3d_inception_dimension = 1024
 
-input4 = Input(shape=(i3d_inception_dimension, ))
+input4 = Input(shape=(i3d_inception_dimension,))
 bn41 = BatchNormalization()(input4)
-#flat4 = Flatten()(bn41)
+# flat4 = Flatten()(bn41)
 
 
 # concatenate
@@ -162,14 +165,17 @@ if TRAIN is True:
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
                                                        op_test, i3d_test], y_test))
 
-    model.save("checkpoints/4channel_OS_less_neuron_"+str(learning_rate)+"_"+str(batch_size)+".h5")
+    model.save("checkpoints/4channel_OS_+" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
+        c21) + "_" + str(c22)
+               + "_" + str(learning_rate) + "_" + str(batch_size) + ".h5")
 
 else:
     trained_model = keras.models.load_model("checkpoints/2channel_1e-05_16.h5", custom_objects={'get_f1': get_f1})
     input2_layer = Model(inputs=trained_model.input, outputs=trained_model.get_layer("input_2").output)
     bn2_layer = Model(inputs=trained_model.input, outputs=trained_model.get_layer("batch_normalization_2").output)
     predict_layer = Model(inputs=trained_model.input, outputs=trained_model.output)
-    input2_layer_output = input2_layer.predict(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological]])
+    input2_layer_output = input2_layer.predict(
+        x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological]])
     bn2_layer_ouput = bn2_layer.predict(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological]])
     predict_layer_output = predict_layer.predict(x=[ts_test[:, :, CAN], ts_test[:, :, physiological]])
     yes = 0
@@ -180,6 +186,7 @@ else:
 
     model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
     model.evaluate(x=[ts_test[:, :, CAN], ts_test[:, :, physiological]], y=y_test)
+
 
 def feature_selection():
     from sklearn.feature_selection import SelectKBest
