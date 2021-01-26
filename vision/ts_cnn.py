@@ -48,6 +48,7 @@ def shuffle_train_test_split(size, ratio):
 # param
 learning_rate = float(sys.argv[1])
 batch_size = int(sys.argv[2])
+decay_rate = float(sys.argv[3])
 
 time_series = np.load("../data/concat_X_10hz_6_0.npy")
 # time_series = time_series[:, :, [0, 1, 2, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18]]
@@ -157,13 +158,15 @@ model.summary()
 TRAIN = True
 
 if TRAIN is True:
-    epochs = 1000
-    decay_rate = learning_rate / epochs
-    model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
+    lr_schedule = keras.optimizers.schedules.ExponentialDecay(
+        initial_learning_rate=learning_rate,
+        decay_steps=1000,
+        decay_rate=decay_rate)
+
+    model.compile(optimizer=Adam(learning_rate=lr_schedule), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
 
     model.fit(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological],
-                 oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=epochs,
-              decay=decay_rate,
+                 oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=1000,
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
                                                        op_test, i3d_test], y_test))
 
