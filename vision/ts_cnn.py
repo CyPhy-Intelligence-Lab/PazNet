@@ -15,6 +15,7 @@ from keras.layers.pooling import MaxPooling2D
 from keras.layers import Dropout
 from keras.layers import BatchNormalization
 from keras.layers.merge import concatenate
+from keras.regularizers import l2
 from keras.optimizers import SGD
 from keras.optimizers import Adam
 from keras.losses import categorical_crossentropy, binary_crossentropy
@@ -49,6 +50,7 @@ def shuffle_train_test_split(size, ratio):
 learning_rate = float(sys.argv[1])
 batch_size = int(sys.argv[2])
 decay_rate = float(sys.argv[3])
+l2 = float(sys.argv[4])
 
 time_series = np.load("../data/concat_X_10hz_6_0.npy")
 # time_series = time_series[:, :, [0, 1, 2, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18]]
@@ -102,20 +104,20 @@ c31, c32 = 32, 32
 # CAN channel
 input1 = Input(shape=(60, 11, 1))
 bn11 = BatchNormalization()(input1)
-conv11 = Conv2D(c11, kernel_size=3, activation='relu')(bn11)
+conv11 = Conv2D(c11, kernel_size=3, activation='relu', kernel_regularizer=l2(l2), bias_regularizer=l2(l2))(bn11)
 pool11 = MaxPooling2D(pool_size=(2, 2))(conv11)
 bn12 = BatchNormalization()(pool11)
-conv12 = Conv2D(c12, kernel_size=3, activation='relu')(bn12)
+conv12 = Conv2D(c12, kernel_size=3, activation='relu', kernel_regularizer=l2(l2), bias_regularizer=l2(l2))(bn12)
 pool12 = MaxPooling2D(pool_size=(2, 2))(conv12)
 flat1 = Flatten()(pool12)
 
 # Physiological channel
 input2 = Input(shape=(60, 8, 1))
 bn21 = BatchNormalization()(input2)
-conv21 = Conv2D(c21, kernel_size=3, activation='relu')(bn21)
+conv21 = Conv2D(c21, kernel_size=3, activation='relu', kernel_regularizer=l2(l2), bias_regularizer=l2(l2))(bn21)
 pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
 bn22 = BatchNormalization()(pool21)
-conv22 = Conv2D(c22, kernel_size=2, activation='relu')(bn22)
+conv22 = Conv2D(c22, kernel_size=2, activation='relu', kernel_regularizer=l2(l2), bias_regularizer=l2(l2))(bn22)
 pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
 flat2 = Flatten()(pool22)
 
@@ -126,10 +128,10 @@ n_face_pose = 70 * 2
 
 input3 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
 bn31 = BatchNormalization()(input3)
-conv31 = Conv2D(c31, kernel_size=3, activation='relu')(bn31)
+conv31 = Conv2D(c31, kernel_size=3, activation='relu', kernel_regularizer=l2(l2), bias_regularizer=l2(l2))(bn31)
 pool31 = MaxPooling2D(pool_size=(2, 2))(conv31)
 bn32 = BatchNormalization()(pool31)
-conv32 = Conv2D(c32, kernel_size=3, activation='relu')(bn32)
+conv32 = Conv2D(c32, kernel_size=3, activation='relu', kernel_regularizer=l2(l2), bias_regularizer=l2(l2))(bn32)
 pool32 = MaxPooling2D(pool_size=(2, 2))(conv32)
 flat3 = Flatten()(pool32)
 
@@ -146,9 +148,9 @@ bn41 = BatchNormalization()(input4)
 merge = concatenate([flat1, flat2, flat3, bn41])
 
 bn3 = BatchNormalization()(merge)
-hidden1 = Dense(8, activation='relu')(bn3)
+hidden1 = Dense(8, activation='relu', kernel_regularizer=l2(l2), bias_regularizer=l2(l2))(bn3)
 dropout1 = Dropout(0.5)(hidden1)
-hidden2 = Dense(4, activation='relu')(dropout1)
+hidden2 = Dense(4, activation='relu', kernel_regularizer=l2(l2), bias_regularizer=l2(l2))(dropout1)
 dropout2 = Dropout(0.5)(hidden2)
 bn4 = BatchNormalization()(dropout2)
 output = Dense(2, activation='softmax')(bn4)
