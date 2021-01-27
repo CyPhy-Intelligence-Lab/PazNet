@@ -50,7 +50,7 @@ def shuffle_train_test_split(size, ratio):
 learning_rate = float(sys.argv[1])
 batch_size = int(sys.argv[2])
 decay_rate = float(sys.argv[3])
-l2 = float(sys.argv[4])
+l2 = 0.001
 
 time_series = np.load("../data/concat_X_10hz_6_0.npy")
 # time_series = time_series[:, :, [0, 1, 2, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18]]
