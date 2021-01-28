@@ -5,6 +5,7 @@ import sys
 import keras
 from sklearn.metrics import f1_score, recall_score, precision_score
 from sklearn.utils import shuffle
+from sklearn import preprocessing
 from keras.utils import plot_model
 from keras.models import Model
 from keras.layers import Input
@@ -18,6 +19,8 @@ from keras.layers.merge import concatenate
 from keras.regularizers import l2
 from keras.optimizers import SGD
 from keras.optimizers import Adam
+from keras.callbacks import EarlyStopping
+from keras.callbacks import ModelCheckpoint
 from keras.losses import categorical_crossentropy, binary_crossentropy
 from keras.metrics import categorical_accuracy
 import data_preprocessing
@@ -25,6 +28,7 @@ import keras.backend as K
 from keras import initializers
 from imblearn.over_sampling import SMOTE
 import os
+import matplotlib.pyplot as plt
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"
 
@@ -53,11 +57,21 @@ decay_rate = float(sys.argv[3])
 l2_value = float(sys.argv[4])
 epoch = int(sys.argv[5])
 
+# read data
 time_series = np.load("../data/concat_X_10hz_6_0.npy")
 # time_series = time_series[:, :, [0, 1, 2, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18]]
 open_pose = np.load("../data/op.npy")
 i3d_inception_features = np.load("../data/i3d_inceptionv1_features.npy")
 label = np.load("../data/concat_label.npy")
+
+# normalization
+ts_min_max_scaler = preprocessing.MinMaxScaler()
+op_min_max_scaler = preprocessing.MinMaxScaler()
+
+time_series = ts_min_max_scaler.fit_transform(time_series.reshape(-1, 19))
+time_series = time_series.reshape(-1, 60, 19)
+open_pose = op_min_max_scaler.fit_transform(open_pose.reshape(-1, 252))
+open_pose = open_pose.reshape(-1, 60, 252)
 
 # shuffle
 # ts_data, label = shuffle(time_series, open_pose, i3d_inception_features, label, random_state=0)
@@ -161,21 +175,38 @@ model.summary()
 TRAIN = True
 
 if TRAIN is True:
+
+    # learning rate decay
     lr_schedule = keras.optimizers.schedules.ExponentialDecay(
         initial_learning_rate=learning_rate,
         decay_steps=1000,
         decay_rate=decay_rate)
 
+    # early stopping
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=200)
+
+    # save the best model by measuring F1-score
+    mc = ModelCheckpoint("checkpoints/best_4channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
+        c31) + "_" + str(c32)+ "_" + str(learning_rate) + "_" + str(decay_rate) + "_" + str(batch_size) + ".h5",
+                         monitor='val_get_f1', mode='max', verbose=1, save_best_only=True)
+
     model.compile(optimizer=Adam(learning_rate=lr_schedule), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
 
-    model.fit(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological],
+    history = model.fit(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological],
                  oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=epoch,
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
-                                                       op_test, i3d_test], y_test))
-
+                                                       op_test, i3d_test], y_test), callbacks=[es, mc])
+    '''
     model.save("checkpoints/4channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
         c31) + "_" + str(c32)
                + "_" + str(learning_rate) + "_" + str(decay_rate) + "_" + str(batch_size) + ".h5")
+    '''
+
+    # visualization
+    plt.plot(history.history['loss'], label='train')
+    plt.plot(history.history['val_loss'], label='test')
+    plt.legend()
+    plt.show()
 
 else:
     trained_model = keras.models.load_model("checkpoints/2channel_1e-05_16.h5", custom_objects={'get_f1': get_f1})
