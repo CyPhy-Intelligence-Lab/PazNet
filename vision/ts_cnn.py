@@ -51,6 +51,7 @@ learning_rate = float(sys.argv[1])
 batch_size = int(sys.argv[2])
 decay_rate = float(sys.argv[3])
 l2_value = float(sys.argv[4])
+epoch = int(sys.argv[5])
 
 time_series = np.load("../data/concat_X_10hz_6_0.npy")
 # time_series = time_series[:, :, [0, 1, 2, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18]]
@@ -168,7 +169,7 @@ if TRAIN is True:
     model.compile(optimizer=Adam(learning_rate=lr_schedule), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
 
     model.fit(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological],
-                 oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=1000,
+                 oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=epoch,
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
                                                        op_test, i3d_test], y_test))
 
