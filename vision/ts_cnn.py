@@ -187,7 +187,7 @@ if TRAIN is True:
 
     # save the best model by measuring F1-score
     mc = ModelCheckpoint("checkpoints/best_4channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
-        c31) + "_" + str(c32)+ "_" + str(learning_rate) + "_" + str(decay_rate) + "_" + str(batch_size) + ".h5",
+        c31) + "_" + str(c32)+ "_" + str(learning_rate) + "_" + str(decay_rate) + "_" + str(l2_value)+ '_'+str(batch_size) + ".h5",
                          monitor='val_get_f1', mode='max', verbose=1, save_best_only=True)
 
     model.compile(optimizer=Adam(learning_rate=lr_schedule), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
