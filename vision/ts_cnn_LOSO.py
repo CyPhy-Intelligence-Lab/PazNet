@@ -236,7 +236,8 @@ for train_index, test_index in loso.split(data_concat, label, groups):
         plt.plot(history.history['loss'], label='train')
         plt.plot(history.history['val_loss'], label='test')
         plt.legend()
-        plt.show()
+        plt.savefig("plots/LOSO/best_4channel_LOSO_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
+            c31) + "_" + str(c32)+ "_" + str(learning_rate) + "_" + str(decay_rate) + "_" + str(l2_value)+ '_'+str(batch_size) + "_subject"+str(num)+".png")
 
     else:
         trained_model = keras.models.load_model("checkpoints/2channel_1e-05_16.h5", custom_objects={'get_f1': get_f1})
