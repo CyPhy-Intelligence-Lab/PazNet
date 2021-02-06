@@ -62,7 +62,10 @@ time_series = np.load("../data/concat_X_10hz_6_0.npy")
 # time_series = time_series[:, :, [0, 1, 2, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18]]
 open_pose = np.load("../data/op.npy")
 i3d_inception_features = np.load("../data/i3d_inceptionv1_features.npy")
-label = np.load("../data/concat_label.npy")
+#label = np.load("../data/concat_label.npy")
+annotator_label = pd.read_csv("../data/annotated_samples.csv", usecols=['safe_binary'])
+label = np.array(annotator_label).T.flatten()
+
 
 # normalization
 ts_min_max_scaler = preprocessing.MinMaxScaler()
@@ -186,7 +189,7 @@ if TRAIN is True:
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=200)
 
     # save the best model by measuring F1-score
-    mc = ModelCheckpoint("checkpoints/best_4channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
+    mc = ModelCheckpoint("checkpoints/safe_best_4channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
         c31) + "_" + str(c32)+ "_" + str(learning_rate) + "_" + str(decay_rate) + "_" + str(l2_value)+ '_'+str(batch_size) + ".h5",
                          monitor='val_get_f1', mode='max', verbose=1, save_best_only=True)
 
