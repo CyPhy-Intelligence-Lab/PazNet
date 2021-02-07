@@ -62,7 +62,11 @@ time_series = np.load("../data/concat_X_10hz_6_0.npy")
 # time_series = time_series[:, :, [0, 1, 2, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17, 18]]
 open_pose = np.load("../data/op.npy")
 i3d_inception_features = np.load("../data/i3d_inceptionv1_features.npy")
+
+# drivers answer
 #label = np.load("../data/concat_label.npy")
+
+# annotated label
 annotator_label = pd.read_csv("../data/annotated_samples.csv", usecols=['safe_binary'])
 label = np.array(annotator_label).T.flatten()
 
