@@ -167,18 +167,16 @@ bn41 = BatchNormalization()(input4)
 
 
 # concatenate
-#merge = concatenate([flat1, flat2, flat3, bn41])
-#merge = concatenate([flat3]) # ablation study on channel 2
+merge = concatenate([flat1, flat2, flat3, bn41])
 
-bn3 = BatchNormalization()(flat3)
+bn3 = BatchNormalization()(merge)
 hidden1 = Dense(8, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn3)
 dropout1 = Dropout(0.5)(hidden1)
 hidden2 = Dense(4, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(dropout1)
 dropout2 = Dropout(0.5)(hidden2)
 bn4 = BatchNormalization()(dropout2)
 output = Dense(2, activation='softmax')(bn4)
-#model = Model([input1, input2, input3, input4], output)
-model = Model([input3], output) # ablation study on channel 2, 3
+model = Model([input1, input2, input3, input4], output)
 model.summary()
 
 TRAIN = True
@@ -201,10 +199,10 @@ if TRAIN is True:
 
     model.compile(optimizer=Adam(learning_rate=lr_schedule), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
 
-    history = model.fit(x=[#oversampled_ts_train[:, :, CAN], #oversampled_ts_train[:, :, physiological],
-                 oversampled_op_train, ], y=oversampled_y_train, epochs=epoch,
-              batch_size=batch_size, validation_data=([#ts_test[:, :, CAN], #ts_test[:, :, physiological],
-                                                       op_test, ], y_test), callbacks=[es, mc])
+    history = model.fit(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological],
+                 oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=epoch,
+              batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
+                                                       op_test, i3d_test], y_test), callbacks=[es, mc])
     '''
     model.save("checkpoints/4channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
         c31) + "_" + str(c32)
@@ -218,13 +216,13 @@ if TRAIN is True:
     plt.show()
 
 else:
-    trained_model = keras.models.load_model("checkpoints/2channel_1e-05_16.h5", custom_objects={'get_f1': get_f1})
-    input2_layer = Model(inputs=trained_model.input, outputs=trained_model.get_layer("input_2").output)
-    bn2_layer = Model(inputs=trained_model.input, outputs=trained_model.get_layer("batch_normalization_2").output)
+    trained_model = keras.models.load_model("checkpoints/best_4channel_OS_16_16_16_16_32_32_0.001_1.0_0.1_32.h5", custom_objects={'get_f1': get_f1})
+    #input2_layer = Model(inputs=trained_model.input, outputs=trained_model.get_layer("input_2").output)
+    #bn2_layer = Model(inputs=trained_model.input, outputs=trained_model.get_layer("batch_normalization_2").output)
     predict_layer = Model(inputs=trained_model.input, outputs=trained_model.output)
-    input2_layer_output = input2_layer.predict(
-        x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological]])
-    bn2_layer_ouput = bn2_layer.predict(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological]])
+    #input2_layer_output = input2_layer.predict(
+        #x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological]])
+    #bn2_layer_ouput = bn2_layer.predict(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological]])
     predict_layer_output = predict_layer.predict(x=[ts_test[:, :, CAN], ts_test[:, :, physiological]])
     yes = 0
     for i in predict_layer_output:
@@ -232,8 +230,17 @@ else:
             yes += 1
     print(yes)
 
-    model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
-    model.evaluate(x=[ts_test[:, :, CAN], ts_test[:, :, physiological]], y=y_test)
+    metrics = [keras.metrics.TruePositives(name='tp'),
+               keras.metrics.FalsePositives(name='fp'),
+               keras.metrics.TrueNegatives(name='tn'),
+               keras.metrics.FalseNegatives(name='fn'),
+               keras.metrics.CategoricalAccuracy(name='categorical_accuracy'),
+               #keras.metrics.Precision(name='precision'),
+               #keras.metrics.Recall(name='recall'),
+               keras.metrics.AUC(name='auc')]
+
+    model.compile(optimizer=Adam(learning_rate), loss=categorical_crossentropy, metrics=[get_f1, metrics])
+    model.evaluate(x=[ts_test[:, :, CAN], ts_test[:, :, physiological], op_test, i3d_test], y=y_test)
 
 
 def feature_selection():
