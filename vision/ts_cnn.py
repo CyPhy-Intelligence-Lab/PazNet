@@ -168,7 +168,7 @@ bn41 = BatchNormalization()(input4)
 
 # concatenate
 #merge = concatenate([flat1, flat2, flat3, bn41])
-merge = concatenate([flat1, bn41]) # ablation study on channel 2
+merge = concatenate([flat3, bn41]) # ablation study on channel 2
 
 bn3 = BatchNormalization()(merge)
 hidden1 = Dense(8, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn3)
@@ -178,7 +178,7 @@ dropout2 = Dropout(0.5)(hidden2)
 bn4 = BatchNormalization()(dropout2)
 output = Dense(2, activation='softmax')(bn4)
 #model = Model([input1, input2, input3, input4], output)
-model = Model([input1, input4], output) # ablation study on channel 2, 3
+model = Model([input3, input4], output) # ablation study on channel 2, 3
 model.summary()
 
 TRAIN = True
