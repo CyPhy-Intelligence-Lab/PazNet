@@ -223,7 +223,7 @@ else:
     #input2_layer_output = input2_layer.predict(
         #x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological]])
     #bn2_layer_ouput = bn2_layer.predict(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological]])
-    predict_layer_output = predict_layer.predict(x=[ts_test[:, :, CAN], ts_test[:, :, physiological]])
+    predict_layer_output = predict_layer.predict(x=[ts_test[:, :, CAN], ts_test[:, :, physiological], op_test, i3d_test])
     yes = 0
     for i in predict_layer_output:
         if i[0] < i[1]:
