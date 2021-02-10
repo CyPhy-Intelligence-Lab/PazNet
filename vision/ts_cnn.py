@@ -83,7 +83,7 @@ open_pose = open_pose.reshape(-1, 60, 252)
 # shuffle
 # ts_data, label = shuffle(time_series, open_pose, i3d_inception_features, label, random_state=0)
 # train-test split
-train_index, test_index = shuffle_train_test_split(len(label), 0.8)
+train_index, test_index = shuffle_train_test_split(len(label), 0.9)
 ts_train, op_train, i3d_train, y_train = time_series[train_index], open_pose[train_index], \
                                          i3d_inception_features[train_index], label[train_index]
 ts_test, op_test, i3d_test, y_test = time_series[test_index], open_pose[test_index], \
