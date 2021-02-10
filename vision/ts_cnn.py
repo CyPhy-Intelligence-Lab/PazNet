@@ -195,7 +195,7 @@ if TRAIN is True:
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=200)
 
     # save the best model by measuring F1-score
-    mc = ModelCheckpoint("checkpoints/best_134channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
+    mc = ModelCheckpoint("checkpoints/best_14channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
         c31) + "_" + str(c32)+ "_" + str(learning_rate) + "_" + str(decay_rate) + "_" + str(l2_value)+ '_'+str(batch_size) + ".h5",
                          monitor='val_get_f1', mode='max', verbose=1, save_best_only=True)
 
