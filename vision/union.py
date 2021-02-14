@@ -250,7 +250,7 @@ if TRAIN is True:
                                           batch_size=batch_size,
                                           validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
                                                             op_test, i3d_test], y_test_safety),
-                                          callbacks=[preference_es, preference_mc])
+                                          callbacks=[safety_es, safety_mc])
 
 
 
