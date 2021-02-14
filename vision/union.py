@@ -105,7 +105,10 @@ oversampled_i3d_train = oversampled_X_train[:, 60 * (252 + 19):]
 oversampled_y_train_preference = pd.get_dummies(oversampled_y_train_preference, columns=['l1', 'l2'])
 y_test_preference = pd.get_dummies(y_test_preference, columns=['l1', 'l2'])
 
-_, oversampled_y_train_safety = sm.fit_resample(X_train, np.array(y_train_safety))
+oversampled_X_train_safety, oversampled_y_train_safety = sm.fit_resample(X_train, np.array(y_train_safety))
+oversampled_ts_train_safety = oversampled_X_train_safety[:, :60 * 19].reshape(-1, 60, 19)
+oversampled_op_train_safety = oversampled_X_train_safety[:, 60 * 19:60 * (252 + 19)].reshape(-1, 60, 252)
+oversampled_i3d_train_safety = oversampled_X_train_safety[:, 60 * (252 + 19):]
 oversampled_y_train_safety = pd.get_dummies(oversampled_y_train_safety, columns=['l1', 'l2'])
 y_test_safety = pd.get_dummies(y_test_safety, columns=['l1', 'l2'])
 
@@ -241,8 +244,8 @@ if TRAIN is True:
     safety_model.compile(optimizer=Adam(learning_rate=lr_schedule), loss=categorical_crossentropy,
                          metrics=[get_f1, categorical_accuracy])
 
-    safety_history = preference_model.fit(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological],
-                                             oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train_safety,
+    safety_history = preference_model.fit(x=[oversampled_ts_train_safety[:, :, CAN], oversampled_ts_train_safety[:, :, physiological],
+                                             oversampled_op_train_safety, oversampled_i3d_train_safety], y=oversampled_y_train_safety,
                                           epochs=epoch,
                                           batch_size=batch_size,
                                           validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
@@ -268,6 +271,8 @@ if TRAIN is True:
     plt.legend()
     plt.show()
 
+    preference_model = keras.models.load_model("checkpoints/preference_OS_16_16_16_16_32_32_0.001_1.0_0.1_32.h5", custom_objects={'get_f1': get_f1})
+    safety_model = keras.models.load_model("checkpoints/safety_OS_16_16_16_16_32_32_0.001_1.0_0.1_32.h5", custom_objects={'get_f1': get_f1})
     preference_predicts = preference_model.predict(x=[ts_test[:, :, CAN], ts_test[:, :, physiological], op_test, i3d_test])
     safety_predicts = safety_model.predict(x=[ts_test[:, :, CAN], ts_test[:, :, physiological], op_test, i3d_test])
     np.save("preference_predicts.npy", preference_predicts)
