@@ -92,7 +92,7 @@ for item in subject_id:
 
 groups = np.array(group_list)
 loso = LeaveOneGroupOut()
-
+'''
 # normalization
 ts_min_max_scaler = preprocessing.MinMaxScaler()
 op_min_max_scaler = preprocessing.MinMaxScaler()
@@ -103,7 +103,7 @@ time_series = time_series.reshape(-1, 60*19)
 open_pose = op_min_max_scaler.fit_transform(open_pose.reshape(-1, 252))
 open_pose = open_pose.reshape(-1, 60, 252)
 open_pose = open_pose.reshape(-1, 60*252)
-
+'''
 data_concat = np.concatenate((time_series, open_pose, i3d_inception_features), axis=1)
 num = -1
 for train_index, test_index in loso.split(data_concat, label, groups):

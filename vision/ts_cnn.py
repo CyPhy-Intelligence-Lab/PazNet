@@ -70,7 +70,7 @@ i3d_inception_features = np.load("../data/i3d_inceptionv1_features.npy")
 annotator_label = pd.read_csv("../data/annotated_samples.csv", usecols=['safe_binary'])
 label = np.array(annotator_label).T.flatten()
 
-
+'''
 # normalization
 ts_min_max_scaler = preprocessing.MinMaxScaler()
 op_min_max_scaler = preprocessing.MinMaxScaler()
@@ -79,7 +79,7 @@ time_series = ts_min_max_scaler.fit_transform(time_series.reshape(-1, 19))
 time_series = time_series.reshape(-1, 60, 19)
 open_pose = op_min_max_scaler.fit_transform(open_pose.reshape(-1, 252))
 open_pose = open_pose.reshape(-1, 60, 252)
-
+'''
 # shuffle
 # ts_data, label = shuffle(time_series, open_pose, i3d_inception_features, label, random_state=0)
 # train-test split
