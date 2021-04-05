@@ -181,7 +181,7 @@ output = Dense(2, activation='softmax')(bn4)
 model = Model([input2], output)
 model.summary()
 
-TRAIN = False
+TRAIN = True
 
 if TRAIN is True:
 
