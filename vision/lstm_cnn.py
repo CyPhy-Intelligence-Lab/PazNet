@@ -4,6 +4,7 @@ import tensorflow as tf
 import sys
 import keras
 from sklearn.metrics import f1_score, recall_score, precision_score
+from sklearn.model_selection import StratifiedKFold
 from sklearn.utils import shuffle
 from sklearn import preprocessing
 from keras.utils import plot_model
@@ -14,7 +15,7 @@ from keras.layers import Flatten
 from keras.layers.convolutional import Conv2D
 from keras.layers.pooling import MaxPooling2D
 from keras.layers import Dropout
-from keras.layers import BatchNormalization, LSTM, Reshape
+from keras.layers import BatchNormalization
 from keras.layers.merge import concatenate
 from keras.regularizers import l2
 from keras.optimizers import SGD
@@ -30,7 +31,16 @@ from imblearn.over_sampling import SMOTE
 import os
 import matplotlib.pyplot as plt
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM
+
+# param
+learning_rate = float(sys.argv[1])
+batch_size = int(sys.argv[2])
+decay_rate = float(sys.argv[3])
+l2_value = float(sys.argv[4])
+epoch = int(sys.argv[5])
 
 
 def get_f1(y_true, y_pred):  # taken from old keras source code
@@ -49,13 +59,6 @@ def shuffle_train_test_split(size, ratio):
     sep = int(size * ratio)
     return index[:sep], index[sep:]
 
-
-# param
-learning_rate = float(sys.argv[1])
-batch_size = int(sys.argv[2])
-decay_rate = float(sys.argv[3])
-l2_value = float(sys.argv[4])
-epoch = int(sys.argv[5])
 
 # read data
 time_series = np.load("../data/concat_X_10hz_6_0.npy")
@@ -80,6 +83,7 @@ time_series = time_series.reshape(-1, 60, 19)
 open_pose = op_min_max_scaler.fit_transform(open_pose.reshape(-1, 252))
 open_pose = open_pose.reshape(-1, 60, 252)
 
+'''
 # shuffle
 # ts_data, label = shuffle(time_series, open_pose, i3d_inception_features, label, random_state=0)
 # train-test split
@@ -102,92 +106,118 @@ oversampled_i3d_train = oversampled_X_train[:, 60 * (252 + 19):]
 
 oversampled_y_train = pd.get_dummies(oversampled_y_train, columns=['l1', 'l2'])
 y_test = pd.get_dummies(y_test, columns=['l1', 'l2'])
+'''
+time_series = time_series.reshape(-1, 60*19)
+open_pose = open_pose.reshape(-1, 60*252)
+data_concat = np.concatenate((time_series, open_pose, i3d_inception_features), axis=1)
+skf = StratifiedKFold(n_splits=10)
+total_score = []
+for train_index, test_index in skf.split(data_concat, label):
+    X_train = data_concat[train_index]
+    y_train = label[train_index]
+    X_test = data_concat[test_index]
+    y_test = label[test_index]
 
-assert not np.any(np.isnan(oversampled_X_train))
-assert not np.any(np.isnan(oversampled_y_train))
+    score = []
 
-print("Training")
-print(oversampled_ts_train.shape)
-print(oversampled_op_train.shape)
-print(oversampled_i3d_train.shape)
-print(oversampled_y_train.shape)
-print("Test")
-print(ts_test.shape)
-print(op_test.shape)
-print(i3d_test.shape)
-print(y_test.shape)
+    # over sampling on training set
+    sm = SMOTE(random_state=0)
+    oversampled_X_train, oversampled_y_train = sm.fit_resample(X_train, y_train)
 
-CAN = [0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18]
-physiological = [6, 7, 8, 9, 10, 11, 12, 13]
-c11, c12 = 16, 16
-c21, c22 = 16, 16
-c31, c32 = 32, 32
+    oversampled_ts_train = oversampled_X_train[:, :60 * 19].reshape(-1, 60, 19)
+    oversampled_op_train = oversampled_X_train[:, 60 * 19:60 * (252 + 19)].reshape(-1, 60, 252)
+    oversampled_i3d_train = oversampled_X_train[:, 60 * (252 + 19):]
 
-# CAN channel
-input1 = Input(shape=(60, 11, 1))
-bn11 = BatchNormalization()(input1)
-conv11 = Conv2D(c11, kernel_size=3, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn11)
-pool11 = MaxPooling2D(pool_size=(2, 2))(conv11)
-bn12 = BatchNormalization()(pool11)
-conv12 = Conv2D(c12, kernel_size=3, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn12)
-pool12 = MaxPooling2D(pool_size=(2, 2))(conv12)
-reshape1 = Reshape((13, 16))(pool12)
-lstm1 = LSTM(64, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(reshape1)
-flat1 = Flatten()(lstm1)
+    ts_test = X_test[:, :60 * 19].reshape(-1, 60, 19)
+    op_test = X_test[:, 60 * 19:60 * (252 + 19)].reshape(-1, 60, 252)
+    i3d_test = X_test[:, 60 * (252 + 19):]
 
-# Physiological channel
-input2 = Input(shape=(60, 8, 1))
-bn21 = BatchNormalization()(input2)
-conv21 = Conv2D(c21, kernel_size=3, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn21)
-pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
-bn22 = BatchNormalization()(pool21)
-conv22 = Conv2D(c22, kernel_size=2, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn22)
-pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
-reshape2 = Reshape((14, 16))(pool22)
-lstm2 = LSTM(64, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(reshape2)
-flat2 = Flatten()(lstm2)
+    oversampled_y_train = pd.get_dummies(oversampled_y_train, columns=['l1', 'l2'])
+    y_test = pd.get_dummies(y_test, columns=['l1', 'l2'])
 
-# open pose channel
-n_body_pose = 14 * 2
-n_hands_pose = 21 * 4
-n_face_pose = 70 * 2
+    assert not np.any(np.isnan(oversampled_X_train))
+    assert not np.any(np.isnan(oversampled_y_train))
 
-input3 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
-bn31 = BatchNormalization()(input3)
-conv31 = Conv2D(c31, kernel_size=3, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn31)
-pool31 = MaxPooling2D(pool_size=(2, 2))(conv31)
-bn32 = BatchNormalization()(pool31)
-conv32 = Conv2D(c32, kernel_size=3, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn32)
-pool32 = MaxPooling2D(pool_size=(2, 2))(conv32)
-reshape3 = Reshape((13*61, 32))(pool32)
-lstm3 = LSTM(64, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(reshape3)
-flat3 = Flatten()(lstm3)
+    print("Training")
+    print(oversampled_ts_train.shape)
+    print(oversampled_op_train.shape)
+    print(oversampled_i3d_train.shape)
+    print(oversampled_y_train.shape)
+    print("Test")
+    print(ts_test.shape)
+    print(op_test.shape)
+    print(i3d_test.shape)
+    print(y_test.shape)
 
-# I3D
-i3d_resnet_dimension = 2048
-i3d_inception_dimension = 1024
+    CAN = [0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18]
+    physiological = [6, 7, 8, 9, 10, 11, 12, 13]
 
-input4 = Input(shape=(i3d_inception_dimension,))
-bn41 = BatchNormalization()(input4)
-# flat4 = Flatten()(bn41)
+    # CAN channel
+    input1 = Input(shape=(60, 11, 1))
+    bn11 = BatchNormalization()(input1)
+    conv11 = Conv2D(c11, kernel_size=3, activation='relu', kernel_regularizer=l2(l2_value),
+                    bias_regularizer=l2(l2_value))(bn11)
+    pool11 = MaxPooling2D(pool_size=(2, 2))(conv11)
+    bn12 = BatchNormalization()(pool11)
+    conv12 = Conv2D(c12, kernel_size=3, activation='relu', kernel_regularizer=l2(l2_value),
+                    bias_regularizer=l2(l2_value))(bn12)
+    pool12 = MaxPooling2D(pool_size=(2, 2))(conv12)
+    reshape1 = Reshape((13, 16))(pool12)
+    lstm1 = LSTM(64, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(reshape1)
+    flat1 = Flatten()(lstm1)
 
+    # Physiological channel
+    input2 = Input(shape=(60, 8, 1))
+    bn21 = BatchNormalization()(input2)
+    conv21 = Conv2D(c21, kernel_size=3, activation='relu', kernel_regularizer=l2(l2_value),
+                    bias_regularizer=l2(l2_value))(bn21)
+    pool21 = MaxPooling2D(pool_size=(2, 2))(conv21)
+    bn22 = BatchNormalization()(pool21)
+    conv22 = Conv2D(c22, kernel_size=2, activation='relu', kernel_regularizer=l2(l2_value),
+                    bias_regularizer=l2(l2_value))(bn22)
+    pool22 = MaxPooling2D(pool_size=(2, 2))(conv22)
+    reshape2 = Reshape((14, 16))(pool22)
+    lstm2 = LSTM(64, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(reshape2)
+    flat2 = Flatten()(lstm2)
 
-# concatenate
-merge = concatenate([flat1, flat2, flat3, bn41])
+    # open pose channel
+    n_body_pose = 14 * 2
+    n_hands_pose = 21 * 4
+    n_face_pose = 70 * 2
 
-bn3 = BatchNormalization()(merge)
-hidden1 = Dense(8, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn3)
-dropout1 = Dropout(0.5)(hidden1)
-hidden2 = Dense(4, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(dropout1)
-dropout2 = Dropout(0.5)(hidden2)
-bn4 = BatchNormalization()(dropout2)
-output = Dense(2, activation='softmax')(bn4)
-model = Model([input1, input2, input3, input4], output)
-model.summary()
+    input3 = Input(shape=(60, n_body_pose + n_hands_pose + n_face_pose, 1))
+    bn31 = BatchNormalization()(input3)
+    conv31 = Conv2D(c31, kernel_size=3, activation='relu', kernel_regularizer=l2(l2_value),
+                    bias_regularizer=l2(l2_value))(bn31)
+    pool31 = MaxPooling2D(pool_size=(2, 2))(conv31)
+    bn32 = BatchNormalization()(pool31)
+    conv32 = Conv2D(c32, kernel_size=3, activation='relu', kernel_regularizer=l2(l2_value),
+                    bias_regularizer=l2(l2_value))(bn32)
+    pool32 = MaxPooling2D(pool_size=(2, 2))(conv32)
+    reshape3 = Reshape((13 * 61, 32))(pool32)
+    lstm3 = LSTM(64, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(reshape3)
+    flat3 = Flatten()(lstm3)
 
-TRAIN = True
+    # I3D
+    i3d_resnet_dimension = 2048
+    i3d_inception_dimension = 1024
 
-if TRAIN is True:
+    input4 = Input(shape=(i3d_inception_dimension,))
+    bn41 = BatchNormalization()(input4)
+    # flat4 = Flatten()(bn41)
+
+    # concatenate
+    merge = concatenate([flat1, flat2, flat3, bn41])
+
+    bn3 = BatchNormalization()(merge)
+    hidden1 = Dense(8, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn3)
+    dropout1 = Dropout(0.5)(hidden1)
+    hidden2 = Dense(4, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(dropout1)
+    dropout2 = Dropout(0.5)(hidden2)
+    bn4 = BatchNormalization()(dropout2)
+    output = Dense(2, activation='softmax')(bn4)
+    model = Model([input1, input2, input3, input4], output)
+    model.summary()
 
     # learning rate decay
     lr_schedule = keras.optimizers.schedules.ExponentialDecay(
@@ -199,9 +229,9 @@ if TRAIN is True:
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=200)
 
     # save the best model by measuring F1-score
-    mc = ModelCheckpoint("checkpoints/best_4channel_CNN_LSTM_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
-        c31) + "_" + str(c32)+ "_" + str(learning_rate) + "_" + str(decay_rate) + "_" + str(l2_value)+ '_'+str(batch_size) + ".h5",
-                         monitor='val_get_f1', mode='max', verbose=1, save_best_only=True)
+    mc = ModelCheckpoint("checkpoints/best_4channel_CNN_LSTM_64_OS_"
+                         + str(learning_rate) + "_" + str(decay_rate) + "_" + str(l2_value)+ '_'+str(batch_size) + ".h5",
+                         monitor='val_get_f1', mode='max', verbose=2, save_best_only=True)
 
     model.compile(optimizer=Adam(learning_rate=lr_schedule), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
 
@@ -209,3 +239,5 @@ if TRAIN is True:
                  oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=epoch,
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
                                                        op_test, i3d_test], y_test), callbacks=[es, mc])
+    total_score.append(mc.best)
+print(np.mean(total_score))
