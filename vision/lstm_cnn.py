@@ -15,7 +15,7 @@ from keras.layers import Flatten
 from keras.layers.convolutional import Conv2D
 from keras.layers.pooling import MaxPooling2D
 from keras.layers import Dropout
-from keras.layers import BatchNormalization
+from keras.layers import BatchNormalization, Reshape
 from keras.layers.merge import concatenate
 from keras.regularizers import l2
 from keras.optimizers import SGD
@@ -151,6 +151,9 @@ for train_index, test_index in skf.split(data_concat, label):
 
     CAN = [0, 1, 2, 3, 4, 5, 14, 15, 16, 17, 18]
     physiological = [6, 7, 8, 9, 10, 11, 12, 13]
+    c11, c12 = 16, 16
+    c21, c22 = 16, 16
+    c31, c32 = 32, 32
 
     # CAN channel
     input1 = Input(shape=(60, 11, 1))
