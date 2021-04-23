@@ -215,7 +215,7 @@ for train_index, test_index in skf.split(data_concat, label):
     bn3 = BatchNormalization()(merge)
     hidden1 = Dense(8, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn3)
     dropout1 = Dropout(0.5)(hidden1)
-    hidden2 = Dense(4, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(dropout1)
+    hidden2 = Dense(4, activation='tanh', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(dropout1)
     dropout2 = Dropout(0.5)(hidden2)
     bn4 = BatchNormalization()(dropout2)
     output = Dense(2, activation='softmax')(bn4)
