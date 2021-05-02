@@ -27,9 +27,11 @@ from keras.metrics import categorical_accuracy
 import data_preprocessing
 import keras.backend as K
 from keras import initializers
-from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import SMOTE, RandomOverSampler, ADASYN
 import os
 import matplotlib.pyplot as plt
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"
 
 from keras.models import Sequential
 from keras.layers import Dense
@@ -84,30 +86,6 @@ open_pose = op_min_max_scaler.fit_transform(open_pose.reshape(-1, 252))
 open_pose = open_pose.reshape(-1, 60, 252)
 
 
-'''
-# shuffle
-# ts_data, label = shuffle(time_series, open_pose, i3d_inception_features, label, random_state=0)
-# train-test split
-train_index, test_index = shuffle_train_test_split(len(label), 0.9)
-ts_train, op_train, i3d_train, y_train = time_series[train_index], open_pose[train_index], \
-                                         i3d_inception_features[train_index], label[train_index]
-ts_test, op_test, i3d_test, y_test = time_series[test_index], open_pose[test_index], \
-                                     i3d_inception_features[test_index], label[test_index]
-
-# over sampling on training set
-sm = SMOTE(random_state=0)
-ts_train = np.array(ts_train)
-ts_train = ts_train.reshape(-1, 60 * 19)
-op_train = op_train.reshape(-1, 60 * 252)
-X_train = np.concatenate((ts_train, op_train, i3d_train), axis=1)
-oversampled_X_train, oversampled_y_train = sm.fit_resample(X_train, np.array(y_train))
-oversampled_ts_train = oversampled_X_train[:, :60 * 19].reshape(-1, 60, 19)
-oversampled_op_train = oversampled_X_train[:, 60 * 19:60 * (252 + 19)].reshape(-1, 60, 252)
-oversampled_i3d_train = oversampled_X_train[:, 60 * (252 + 19):]
-
-oversampled_y_train = pd.get_dummies(oversampled_y_train, columns=['l1', 'l2'])
-y_test = pd.get_dummies(y_test, columns=['l1', 'l2'])
-'''
 time_series = time_series.reshape(-1, 60*19)
 open_pose = open_pose.reshape(-1, 60*252)
 data_concat = np.concatenate((time_series, open_pose, i3d_inception_features), axis=1)
@@ -123,7 +101,10 @@ for train_index, test_index in skf.split(data_concat, label):
 
     # over sampling on training set
     sm = SMOTE(random_state=0)
-    oversampled_X_train, oversampled_y_train = sm.fit_resample(X_train, y_train)
+    ros = RandomOverSampler(random_state=0)
+    adasyn = ADASYN(random_state=0)
+
+    oversampled_X_train, oversampled_y_train = ros.fit_resample(X_train, y_train)
 
     oversampled_ts_train = oversampled_X_train[:, :60 * 19].reshape(-1, 60, 19)
     oversampled_op_train = oversampled_X_train[:, 60 * 19:60 * (252 + 19)].reshape(-1, 60, 252)
@@ -235,7 +216,7 @@ for train_index, test_index in skf.split(data_concat, label):
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=200)
 
     # save the best model by measuring F1-score
-    mc = ModelCheckpoint("checkpoints/best_4channel_CNN_LSTM_64_OS_"
+    mc = ModelCheckpoint("checkpoints/best_4channel_ROS_"
                          + str(learning_rate) + "_" + str(decay_rate) + "_" + str(l2_value)+ '_'+str(batch_size) + ".h5",
                          monitor='val_get_f1', mode='max', verbose=2, save_best_only=True)
 
@@ -246,4 +227,4 @@ for train_index, test_index in skf.split(data_concat, label):
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
                                                        op_test, i3d_test], y_test), callbacks=[es, mc])
     total_score.append(mc.best)
-print(np.mean(total_score))
+print("ROS ave F1: " + np.mean(total_score))

@@ -27,6 +27,8 @@ import data_preprocessing
 import keras.backend as K
 from keras import initializers
 from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import RandomOverSampler
+from imblearn.over_sampling import ADASYN
 import os
 import matplotlib.pyplot as plt
 
@@ -91,11 +93,14 @@ ts_test, op_test, i3d_test, y_test = time_series[test_index], open_pose[test_ind
 
 # over sampling on training set
 sm = SMOTE(random_state=0)
+ros = RandomOverSampler(random_state=0)
+adasyn = ADASYN(random_state=0)
+
 ts_train = np.array(ts_train)
 ts_train = ts_train.reshape(-1, 60 * 19)
 op_train = op_train.reshape(-1, 60 * 252)
 X_train = np.concatenate((ts_train, op_train, i3d_train), axis=1)
-oversampled_X_train, oversampled_y_train = sm.fit_resample(X_train, np.array(y_train))
+oversampled_X_train, oversampled_y_train = ros.fit_resample(X_train, np.array(y_train))
 oversampled_ts_train = oversampled_X_train[:, :60 * 19].reshape(-1, 60, 19)
 oversampled_op_train = oversampled_X_train[:, 60 * 19:60 * (252 + 19)].reshape(-1, 60, 252)
 oversampled_i3d_train = oversampled_X_train[:, 60 * (252 + 19):]
@@ -167,18 +172,16 @@ bn41 = BatchNormalization()(input4)
 
 
 # concatenate
-#merge = concatenate([flat1, flat2, flat3, bn41])
+merge = concatenate([flat1, flat2, flat3, bn41])
 
-#bn3 = BatchNormalization()(merge)
-bn3 = BatchNormalization()(flat2)
+bn3 = BatchNormalization()(merge)
 hidden1 = Dense(8, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(bn3)
 dropout1 = Dropout(0.5)(hidden1)
 hidden2 = Dense(4, activation='relu', kernel_regularizer=l2(l2_value), bias_regularizer=l2(l2_value))(dropout1)
 dropout2 = Dropout(0.5)(hidden2)
 bn4 = BatchNormalization()(dropout2)
 output = Dense(2, activation='softmax')(bn4)
-#model = Model([input1, input2, input3, input4], output)
-model = Model([input2], output)
+model = Model([input1, input2, input3, input4], output)
 model.summary()
 
 TRAIN = True
@@ -195,12 +198,12 @@ if TRAIN is True:
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=200)
 
     # save the best model by measuring F1-score
-    mc = ModelCheckpoint("checkpoints/best_bio_channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
+    mc = ModelCheckpoint("checkpoints/best_4_channel_ROS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
         c31) + "_" + str(c32)+ "_" + str(learning_rate) + "_" + str(decay_rate) + "_" + str(l2_value)+ '_'+str(batch_size) + ".h5",
                          monitor='val_get_f1', mode='max', verbose=1, save_best_only=True)
 
     model.compile(optimizer=Adam(learning_rate=lr_schedule), loss=categorical_crossentropy, metrics=[get_f1, categorical_accuracy])
-    '''
+
     history = model.fit(x=[oversampled_ts_train[:, :, CAN], oversampled_ts_train[:, :, physiological],
                  oversampled_op_train, oversampled_i3d_train], y=oversampled_y_train, epochs=epoch,
               batch_size=batch_size, validation_data=([ts_test[:, :, CAN], ts_test[:, :, physiological],
@@ -208,18 +211,18 @@ if TRAIN is True:
     '''
     history = model.fit(x=oversampled_ts_train[:, :, physiological], y=oversampled_y_train, epochs=epoch,
               batch_size=batch_size, validation_data=(ts_test[:, :, physiological],y_test), callbacks=[es, mc])
-    '''
+
     model.save("checkpoints/4channel_OS_" + str(c11) + "_" + str(c12) + "_" + str(c21) + "_" + str(c22) + "_" + str(
         c31) + "_" + str(c32)
                + "_" + str(learning_rate) + "_" + str(decay_rate) + "_" + str(batch_size) + ".h5")
-    '''
+
 
     # visualization
     plt.plot(history.history['loss'], label='train')
     plt.plot(history.history['val_loss'], label='test')
     plt.legend()
     plt.show()
-
+    '''
 else:
     trained_model = keras.models.load_model("checkpoints/best_4channel_OS_16_16_16_16_32_32_0.001_1.0_0.1_32.h5", custom_objects={'get_f1': get_f1})
     #input2_layer = Model(inputs=trained_model.input, outputs=trained_model.get_layer("input_2").output)
