@@ -184,7 +184,7 @@ output = Dense(2, activation='softmax')(bn4)
 model = Model([input1, input2, input3, input4], output)
 model.summary()
 
-TRAIN = True
+TRAIN = False
 
 if TRAIN is True:
 
@@ -224,7 +224,7 @@ if TRAIN is True:
     plt.show()
     '''
 else:
-    trained_model = keras.models.load_model("checkpoints/best_4channel_OS_16_16_16_16_32_32_0.001_1.0_0.1_32.h5", custom_objects={'get_f1': get_f1})
+    trained_model = keras.models.load_model("checkpoints/best_4channel_ROS_0.001_1.0_0.1_64.h5", custom_objects={'get_f1': get_f1})
     #input2_layer = Model(inputs=trained_model.input, outputs=trained_model.get_layer("input_2").output)
     #bn2_layer = Model(inputs=trained_model.input, outputs=trained_model.get_layer("batch_normalization_2").output)
     predict_layer = Model(inputs=trained_model.input, outputs=trained_model.output)
